@@ -1,26 +1,64 @@
 @import "tailwindcss";
 
+@theme {
+  --color-paper-yellow: #FFFDE7;
+  --color-bright-blue: #3A86FF;
+  --color-coral-orange: #FF7F50;
+  --color-pastel-green: #B4E197;
+  --color-ink-black: #2D3436;
+  --color-surface-bg: #fcfae4;
+  --color-grid-line: #E0E0E0;
+
+  --font-headline: var(--font-bricolage);
+  --font-body: var(--font-courier);
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #FFFDE7;
+  --foreground: #2D3436;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-courier), monospace;
 }
+
+/* Notebook Grid Pattern */
+.bg-grid-pattern {
+  background-image: 
+    linear-gradient(var(--color-grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-grid-line) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Washi Tape Base */
+.washi-tape {
+  position: absolute;
+  height: 24px;
+  background-color: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(2px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 10;
+}
+
+/* Specific Tape Colors */
+.tape-coral { background-color: rgba(255, 127, 80, 0.7); }
+.tape-green { background-color: rgba(180, 225, 151, 0.7); }
+.tape-yellow { background-color: rgba(255, 219, 88, 0.7); }
+.tape-blue { background-color: rgba(58, 134, 255, 0.7); }
+
+/* Torn Edge SVG mask replacement using CSS gradient */
+.torn-edge-top {
+  position: absolute;
+  top: -20px;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: radial-gradient(circle at 10px 0, transparent 10px, #FFFDE7 11px);
+  background-size: 20px 20px;
+  background-repeat: repeat-x;
+  transform: rotate(180deg);
+  z-index: 20;
+}
+

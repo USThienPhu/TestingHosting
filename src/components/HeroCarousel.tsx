@@ -1,0 +1,184 @@
+"use client";
+
+import React, { useState } from "react";
+
+interface Slide {
+  id: number;
+  imageUrl: string;
+  title: string;
+  tapeColor: string;
+  tapeRotation: string;
+  cardRotation: string;
+}
+
+const CAROUSEL_SLIDES: Slide[] = [
+  {
+    id: 1,
+    imageUrl: "https://i.ibb.co/WNfnVRbf/3917c297-35dd-4c88-8fef-17ecae011445.jpg",
+    title: "Morning sketches - Day 42",
+    tapeColor: "tape-coral",
+    tapeRotation: "-rotate-12",
+    cardRotation: "rotate-1",
+  },
+  {
+    id: 2,
+    imageUrl: "https://i.ibb.co/20Q74sfh/z6342549138843-4de1b66dd395f66ae070e36aa8e23c6d.jpg",
+    title: "Cafe inspiration & sketches",
+    tapeColor: "tape-yellow",
+    tapeRotation: "rotate-6",
+    cardRotation: "-rotate-2",
+  },
+  {
+    id: 3,
+    imageUrl: "https://i.ibb.co/wFfdJBbS/photobooth.jpg",
+    title: "Photobooth scrapbook memory",
+    tapeColor: "tape-green",
+    tapeRotation: "rotate-12",
+    cardRotation: "rotate-3",
+  },
+];
+
+export default function HeroCarousel() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const handlePrev = () => {
+    setCurrentIndex((prev) => (prev === 0 ? CAROUSEL_SLIDES.length - 1 : prev - 1));
+  };
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev === CAROUSEL_SLIDES.length - 1 ? 0 : prev + 1));
+  };
+
+  return (
+    <section className="relative bg-bright-blue pt-16 pb-28 md:pb-36 px-6 md:px-20 overflow-hidden min-h-[60vh] flex flex-col items-center justify-center z-10 select-none">
+      {/* Hand-drawn Doodles (Floating decoration) */}
+      <span className="material-symbols-outlined absolute top-10 left-10 text-white/30 text-6xl -rotate-12 pointer-events-none animate-pulse">
+        star
+      </span>
+      <span className="material-symbols-outlined absolute bottom-16 right-12 text-white/30 text-8xl rotate-45 pointer-events-none">
+        palette
+      </span>
+      <span className="material-symbols-outlined absolute top-1/3 right-1/4 text-white/20 text-4xl -rotate-45 pointer-events-none animate-bounce">
+        draw
+      </span>
+      <span className="material-symbols-outlined absolute bottom-1/4 left-16 text-white/20 text-6xl rotate-12 pointer-events-none">
+        auto_awesome
+      </span>
+
+      <div className="text-center mb-10 z-20">
+        <h1 className="font-headline text-4xl md:text-6xl text-paper-yellow mb-4 drop-shadow-[4px_4px_0px_rgba(45,52,54,1)] transform -rotate-1">
+          Our Creative Journey
+        </h1>
+        <p className="font-body text-base md:text-lg text-white bg-ink-black/20 px-4 py-2 inline-block -rotate-1 border border-white/20 rounded-sm">
+          Flipping through the pages of inspiration.
+        </p>
+      </div>
+
+      {/* Carousel Wrapper */}
+      <div className="relative w-full max-w-2xl mx-auto flex items-center justify-center z-20">
+        {/* Left Arrow Button */}
+        <button
+          onClick={handlePrev}
+          aria-label="Previous slide"
+          className="absolute left-[-20px] md:left-[-40px] z-30 bg-paper-yellow border-2 border-ink-black shadow-[3px_3px_0px_0px_rgba(45,52,54,1)] p-3 rounded-full hover:bg-pastel-green hover:-translate-x-1 hover:translate-y-0.5 hover:shadow-none transition-all cursor-pointer"
+        >
+          <span className="material-symbols-outlined text-ink-black font-bold block">west</span>
+        </button>
+
+        {/* Polaroid Deck */}
+        <div className="relative w-full aspect-[4/3] max-w-md md:max-w-lg overflow-visible">
+          {CAROUSEL_SLIDES.map((slide, index) => {
+            const isActive = index === currentIndex;
+            const isPrev = index === (currentIndex === 0 ? CAROUSEL_SLIDES.length - 1 : currentIndex - 1);
+            const isNext = index === (currentIndex === CAROUSEL_SLIDES.length - 1 ? 0 : currentIndex + 1);
+
+            let slideStyle = "opacity-0 scale-75 pointer-events-none z-0";
+            if (isActive) {
+              slideStyle = `opacity-100 scale-100 z-20 ${slide.cardRotation}`;
+            } else if (isPrev) {
+              slideStyle = "opacity-40 -translate-x-[15%] scale-90 rotate-[-4deg] z-10 cursor-pointer";
+            } else if (isNext) {
+              slideStyle = "opacity-40 translate-x-[15%] scale-90 rotate-[4deg] z-10 cursor-pointer";
+            }
+
+            return (
+              <div
+                key={slide.id}
+                onClick={() => !isActive && setCurrentIndex(index)}
+                className={`absolute inset-0 transition-all duration-500 transform ${slideStyle}`}
+              >
+                {/* Washi Tape Accent */}
+                <div className={`washi-tape ${slide.tapeColor} w-32 -top-4 left-1/2 -translate-x-1/2 ${slide.tapeRotation}`}></div>
+
+                {/* Polaroid Frame */}
+                <div className="bg-paper-yellow p-4 pb-12 border-2 border-ink-black shadow-[8px_8px_0px_0px_rgba(45,52,54,1)] w-full h-full flex flex-col relative select-none">
+                  {/* Metal clip representation */}
+                  <svg
+                    className="absolute -top-5 -left-3 w-10 h-10 text-ink-black/60 rotate-12 z-30 pointer-events-none"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M6 9v10a5 5 0 0 0 10 0V6a3 3 0 0 0-6 0v11a1 1 0 0 0 2 0V9"></path>
+                  </svg>
+
+                  {/* Photo area */}
+                  <div className="flex-grow border-2 border-ink-black overflow-hidden relative bg-neutral-200">
+                    <img
+                      alt={slide.title}
+                      className="object-cover w-full h-full grayscale-[10%] sepia-[5%] transition-all duration-300"
+                      src={slide.imageUrl}
+                    />
+                  </div>
+
+                  {/* Caption */}
+                  <p className="font-body text-ink-black text-center mt-3 text-sm font-bold truncate">
+                    {slide.title}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Right Arrow Button */}
+        <button
+          onClick={handleNext}
+          aria-label="Next slide"
+          className="absolute right-[-20px] md:right-[-40px] z-30 bg-paper-yellow border-2 border-ink-black shadow-[3px_3px_0px_0px_rgba(45,52,54,1)] p-3 rounded-full hover:bg-pastel-green hover:translate-x-1 hover:translate-y-0.5 hover:shadow-none transition-all cursor-pointer"
+        >
+          <span className="material-symbols-outlined text-ink-black font-bold block">east</span>
+        </button>
+      </div>
+
+      {/* Page indicator dot markers */}
+      <div className="flex gap-2 mt-8 z-20">
+        {CAROUSEL_SLIDES.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentIndex(index)}
+            className={`w-3 h-3 rounded-full border border-ink-black transition-all cursor-pointer ${
+              index === currentIndex ? "bg-coral-orange scale-110" : "bg-paper-yellow"
+            }`}
+          ></button>
+        ))}
+      </div>
+
+      {/* Tear Paper Bottom Divider */}
+      <div className="absolute bottom-[-1px] left-0 w-full overflow-hidden leading-[0] z-30 pointer-events-none">
+        <svg
+          className="relative block w-full h-[40px] md:h-[60px]"
+          preserveAspectRatio="none"
+          viewBox="0 0 1200 120"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"
+            fill="#FFFDE7"
+          ></path>
+        </svg>
+      </div>
+    </section>
+  );
+}
