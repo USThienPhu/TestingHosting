@@ -22,7 +22,7 @@ const CAROUSEL_SLIDES: Slide[] = [
   },
   {
     id: 2,
-    imageUrl: "https://i.ibb.co/20Q74sfh/z6342549138843-4de1b66dd395f66ae070e36aa8e23c6d.jpg",
+    imageUrl: "https://nrpql5sstrbjjyra.public.blob.vercel-storage.com/z6344277640904_e15bb3bfd59b930157923c6992070a46.jpg",
     title: "Cafe inspiration & sketches",
     tapeColor: "tape-yellow",
     tapeRotation: "rotate-6",
