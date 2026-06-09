@@ -10,7 +10,7 @@ import Lightbox from "../components/Lightbox";
 const INITIAL_ENTRIES: GalleryEntry[] = [
   {
     id: 1,
-    imageUrl: "https://i.ibb.co/WNfnVRbf/3917c297-35dd-4c88-8fef-17ecae011445.jpg",
+    imageUrl: "https://nrpql5sstrbjjyra.public.blob.vercel-storage.com/ptb2.jpg",
     title: "Morning sketches - Day 42",
     category: "Sketches",
     description: "A vibrant, messy artist's desk filled with watercolor palettes, scattered brushes, and a half-finished illustration on thick textured paper. Morning sunlight casting soft shadows.",
@@ -36,7 +36,7 @@ const INITIAL_ENTRIES: GalleryEntry[] = [
   },
   {
     id: 3,
-    imageUrl: "https://i.ibb.co/wFfdJBbS/photobooth.jpg",
+    imageUrl: "https://nrpql5sstrbjjyra.public.blob.vercel-storage.com/ptb3.jpg",
     title: "Analog Photobooth strip",
     category: "Photos",
     description: "Nostalgic film photobooth strip lying next to pencils. Capturing happy smiles, fun poses, and vintage memories with friends. Pure organic scrapbook vibe.",

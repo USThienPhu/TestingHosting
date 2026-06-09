@@ -14,7 +14,7 @@ interface Slide {
 const CAROUSEL_SLIDES: Slide[] = [
   {
     id: 1,
-    imageUrl: "https://i.ibb.co/WNfnVRbf/3917c297-35dd-4c88-8fef-17ecae011445.jpg",
+    imageUrl: "https://nrpql5sstrbjjyra.public.blob.vercel-storage.com/ptb2.jpg",
     title: "Morning sketches - Day 42",
     tapeColor: "tape-coral",
     tapeRotation: "-rotate-12",
@@ -30,7 +30,7 @@ const CAROUSEL_SLIDES: Slide[] = [
   },
   {
     id: 3,
-    imageUrl: "https://i.ibb.co/wFfdJBbS/photobooth.jpg",
+    imageUrl: "https://nrpql5sstrbjjyra.public.blob.vercel-storage.com/ptb3.jpg",
     title: "Photobooth scrapbook memory",
     tapeColor: "tape-green",
     tapeRotation: "rotate-12",
