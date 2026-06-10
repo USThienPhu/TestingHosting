@@ -22,40 +22,61 @@ export default function Lightbox({
 }: LightboxProps) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
+  const [tempImages, setTempImages] = useState<string[]>([]);
   const [editUploading, setEditUploading] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
   const editFileInputRef = useRef<HTMLInputElement>(null);
 
-  // Reset active image index and editing state when entry changes
+  // Initialize and reset states when entry changes
   useEffect(() => {
     setActiveImageIndex(0);
     setIsEditing(false);
     setEditError(null);
+    if (entry) {
+      setTempImages(entry.images || []);
+    }
   }, [entry]);
 
   if (!entry) return null;
 
   const handlePrevImage = () => {
-    if (!entry.images || entry.images.length <= 1) return;
-    setActiveImageIndex((prev) => (prev === 0 ? entry.images.length - 1 : prev - 1));
+    if (!tempImages || tempImages.length <= 1) return;
+    setActiveImageIndex((prev) => (prev === 0 ? tempImages.length - 1 : prev - 1));
   };
 
   const handleNextImage = () => {
-    if (!entry.images || entry.images.length <= 1) return;
-    setActiveImageIndex((prev) => (prev === entry.images.length - 1 ? 0 : prev + 1));
+    if (!tempImages || tempImages.length <= 1) return;
+    setActiveImageIndex((prev) => (prev === tempImages.length - 1 ? 0 : prev + 1));
+  };
+
+  const startEditing = () => {
+    setTempImages(entry.images || []);
+    setIsEditing(true);
+    setEditError(null);
+  };
+
+  const cancelEditing = () => {
+    setTempImages(entry.images || []);
+    setIsEditing(false);
+    setEditError(null);
+  };
+
+  const saveEditing = () => {
+    onEditEntryImages(entry.id, tempImages);
+    setIsEditing(false);
+    setEditError(null);
   };
 
   const moveImage = (index: number, direction: number) => {
-    if (!entry.images) return;
     const newIndex = index + direction;
-    if (newIndex < 0 || newIndex >= entry.images.length) return;
+    if (newIndex < 0 || newIndex >= tempImages.length) return;
 
-    const newImages = [...entry.images];
+    const newImages = [...tempImages];
     const temp = newImages[index];
     newImages[index] = newImages[newIndex];
     newImages[newIndex] = temp;
 
-    onEditEntryImages(entry.id, newImages);
+    setTempImages(newImages);
 
     // Keep the active image in focus
     if (activeImageIndex === index) {
@@ -66,14 +87,13 @@ export default function Lightbox({
   };
 
   const deleteImage = (index: number) => {
-    if (!entry.images) return;
-    if (entry.images.length <= 1) {
+    if (tempImages.length <= 1) {
       setEditError("An album must have at least one image!");
       return;
     }
 
-    const newImages = entry.images.filter((_, idx) => idx !== index);
-    onEditEntryImages(entry.id, newImages);
+    const newImages = tempImages.filter((_, idx) => idx !== index);
+    setTempImages(newImages);
 
     // Adjust active image index
     if (activeImageIndex >= newImages.length) {
@@ -82,7 +102,7 @@ export default function Lightbox({
   };
 
   const handleLocalAddImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!entry.images || !e.target.files || !e.target.files[0]) return;
+    if (!e.target.files || !e.target.files[0]) return;
     const file = e.target.files[0];
 
     if (!file.type.startsWith("image/")) {
@@ -112,8 +132,8 @@ export default function Lightbox({
         throw new Error("No URL returned from upload response.");
       }
 
-      const newImages = [...entry.images, result.url];
-      onEditEntryImages(entry.id, newImages);
+      const newImages = [...tempImages, result.url];
+      setTempImages(newImages);
 
       // Focus on the newly uploaded image
       setActiveImageIndex(newImages.length - 1);
@@ -195,12 +215,12 @@ export default function Lightbox({
             {/* Main Image Viewport with inner arrow overlay */}
             <div className="border border-ink-black/10 overflow-hidden w-full aspect-[4/3] max-h-[35vh] md:max-h-[45vh] flex items-center justify-center bg-neutral-100 relative group/img">
               <img
-                src={entry.images[activeImageIndex] || entry.imageUrl}
+                src={tempImages[activeImageIndex] || entry.imageUrl}
                 alt={entry.title}
                 className="max-h-full max-w-full object-contain select-none"
               />
               
-              {entry.images && entry.images.length > 1 && (
+              {tempImages && tempImages.length > 1 && (
                 <>
                   {/* Left Inner Arrow */}
                   <button
@@ -226,16 +246,16 @@ export default function Lightbox({
 
                   {/* Image Counter Badge */}
                   <div className="absolute bottom-2 right-2 bg-ink-black text-white font-body text-[10px] px-2 py-0.5 rounded-sm border border-white/20 select-none">
-                    {activeImageIndex + 1} / {entry.images.length}
+                    {activeImageIndex + 1} / {tempImages.length}
                   </div>
                 </>
               )}
             </div>
 
             {/* Thumbnail Strip inside the Polaroid (like physical mini prints / film strip) */}
-            {entry.images && entry.images.length > 1 && (
+            {tempImages && tempImages.length > 1 && (
               <div className="flex gap-2.5 mt-3 justify-center w-full overflow-x-auto py-1 select-none scrollbar-thin">
-                {entry.images.map((imgUrl, idx) => (
+                {tempImages.map((imgUrl, idx) => (
                   <button
                     key={idx}
                     onClick={() => setActiveImageIndex(idx)}
@@ -258,26 +278,38 @@ export default function Lightbox({
           /* Album Editor Panel */
           <div className="w-full md:w-[320px] flex flex-col justify-between pl-0 md:pl-4">
             <div className="flex flex-col">
-              {/* Category badge & Done Button */}
-              <div className="flex justify-between items-center mb-4 pr-12 md:pr-14">
-                <span className="bg-pastel-green text-ink-black border border-ink-black text-xs font-body font-bold px-3 py-1 rounded-full w-max">
+              {/* Category badge & Action Buttons (Save/Cancel) */}
+              <div className="flex justify-between items-center mb-4 pr-12 md:pr-14 gap-2">
+                <span className="bg-pastel-green text-ink-black border border-ink-black text-xs font-body font-bold px-2.5 py-1 rounded-full w-max truncate">
                   #{entry.category.toLowerCase()}
                 </span>
-                <button
-                  onClick={() => setIsEditing(false)}
-                  disabled={editUploading}
-                  aria-label="Done editing"
-                  className="flex items-center justify-center bg-pastel-green text-ink-black border-2 border-ink-black shadow-[2px_2px_0px_0px_rgba(45,52,54,1)] w-8 h-8 hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all cursor-pointer rounded-full disabled:opacity-50"
-                >
-                  <span className="material-symbols-outlined text-sm font-bold">check</span>
-                </button>
+                <div className="flex items-center gap-1.5 flex-shrink-0">
+                  {/* Cancel Button */}
+                  <button
+                    onClick={cancelEditing}
+                    disabled={editUploading}
+                    aria-label="Cancel editing"
+                    className="flex items-center justify-center bg-white border-2 border-ink-black shadow-[1px_1px_0px_0px_rgba(45,52,54,1)] w-8 h-8 hover:bg-gray-100 transition-all cursor-pointer rounded-full disabled:opacity-50"
+                  >
+                    <span className="material-symbols-outlined text-sm font-bold">close</span>
+                  </button>
+                  {/* Save Button */}
+                  <button
+                    onClick={saveEditing}
+                    disabled={editUploading}
+                    aria-label="Save changes"
+                    className="flex items-center justify-center bg-pastel-green text-ink-black border-2 border-ink-black shadow-[1px_1px_0px_0px_rgba(45,52,54,1)] w-8 h-8 hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all cursor-pointer rounded-full disabled:opacity-50"
+                  >
+                    <span className="material-symbols-outlined text-sm font-bold">check</span>
+                  </button>
+                </div>
               </div>
 
               <h3 className="font-headline text-xl text-ink-black mb-3">Edit Album Photos</h3>
               
               {/* Album List of images */}
               <div className="flex flex-col gap-3 max-h-[42vh] overflow-y-auto pr-1">
-                {entry.images.map((imgUrl, idx) => (
+                {tempImages.map((imgUrl, idx) => (
                   <div key={idx} className="flex items-center gap-3 bg-white p-2 border border-ink-black shadow-[2px_2px_0px_0px_rgba(45,52,54,1)] select-none">
                     <img src={imgUrl} className="w-12 h-12 object-cover border border-ink-black/20" alt="" />
                     <div className="flex-grow flex items-center justify-between">
@@ -296,7 +328,7 @@ export default function Lightbox({
                         {/* Move Down */}
                         <button
                           type="button"
-                          disabled={idx === entry.images.length - 1 || editUploading}
+                          disabled={idx === tempImages.length - 1 || editUploading}
                           onClick={() => moveImage(idx, 1)}
                           className="p-1 text-ink-black hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer rounded-sm flex items-center justify-center"
                         >
@@ -305,7 +337,7 @@ export default function Lightbox({
                         {/* Delete */}
                         <button
                           type="button"
-                          disabled={entry.images.length <= 1 || editUploading}
+                          disabled={tempImages.length <= 1 || editUploading}
                           onClick={() => deleteImage(idx)}
                           className="p-1 text-red-600 hover:bg-red-50 disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer rounded-sm flex items-center justify-center"
                         >
@@ -371,7 +403,7 @@ export default function Lightbox({
                   #{entry.category.toLowerCase()}
                 </span>
                 <button
-                  onClick={() => setIsEditing(true)}
+                  onClick={startEditing}
                   aria-label="Edit Album"
                   className="flex items-center justify-center bg-white border-2 border-ink-black shadow-[2px_2px_0px_0px_rgba(45,52,54,1)] w-8 h-8 hover:bg-pastel-green hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all cursor-pointer rounded-full"
                 >
