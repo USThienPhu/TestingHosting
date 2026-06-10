@@ -120,7 +120,7 @@ export default function HeroCarousel() {
 
       <div className="text-center mb-10 z-20">
         <h1 className="font-headline text-4xl md:text-6xl text-paper-yellow mb-4 drop-shadow-[4px_4px_0px_rgba(45,52,54,1)] transform -rotate-1">
-          Our Creative Journey
+          Our Journey
         </h1>
         <p className="font-body text-base md:text-lg text-white bg-ink-black/20 px-4 py-2 inline-block -rotate-1 border border-white/20 rounded-sm">
           Flipping through the pages of inspiration.

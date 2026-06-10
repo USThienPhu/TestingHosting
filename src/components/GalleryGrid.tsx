@@ -5,6 +5,7 @@ import React from "react";
 export interface GalleryEntry {
   id: number;
   imageUrl: string;
+  images: string[];
   title: string;
   category: string;
   description: string;
@@ -111,10 +112,17 @@ export default function GalleryGrid({
                       className="w-full h-full object-cover grayscale-[10%] hover:grayscale-0 transition-all duration-500"
                       src={entry.imageUrl}
                     />
+                    {entry.images && entry.images.length > 1 && (
+                      <div className="absolute bottom-2 left-2 bg-paper-yellow border-2 border-ink-black text-ink-black font-body text-[10px] font-bold px-1.5 py-0.5 rounded-sm flex items-center gap-1 shadow-[2px_2px_0px_0px_rgba(45,52,54,1)] z-10 select-none">
+                        <span className="material-symbols-outlined text-xs">photo_library</span>
+                        <span>{entry.images.length}</span>
+                      </div>
+                    )}
                     <div className="absolute top-2 right-2 bg-ink-black/70 text-white font-body text-[10px] px-2 py-0.5 rounded-sm">
                       {entry.category}
                     </div>
                   </div>
+
 
                   {/* Caption & Metadata */}
                   <div className="mt-3 font-body select-none">

@@ -11,6 +11,11 @@ const INITIAL_ENTRIES: GalleryEntry[] = [
   {
     id: 1,
     imageUrl: "https://nrpql5sstrbjjyra.public.blob.vercel-storage.com/ptb2.jpg",
+    images: [
+      "https://nrpql5sstrbjjyra.public.blob.vercel-storage.com/ptb2.jpg",
+      "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1544816155-12df9643f363?w=600&auto=format&fit=crop&q=60"
+    ],
     title: "Morning sketches - Day 42",
     category: "Sketches",
     description: "A vibrant, messy artist's desk filled with watercolor palettes, scattered brushes, and a half-finished illustration on thick textured paper. Morning sunlight casting soft shadows.",
@@ -24,6 +29,11 @@ const INITIAL_ENTRIES: GalleryEntry[] = [
   {
     id: 2,
     imageUrl: "https://nrpql5sstrbjjyra.public.blob.vercel-storage.com/z6344277640904_e15bb3bfd59b930157923c6992070a46.jpg",
+    images: [
+      "https://nrpql5sstrbjjyra.public.blob.vercel-storage.com/z6344277640904_e15bb3bfd59b930157923c6992070a46.jpg",
+      "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1498804103079-a6351b050096?w=600&auto=format&fit=crop&q=60"
+    ],
     title: "Cafe inspiration",
     category: "Sketches",
     description: "Hands holding a thick worn sketchbook filled with intricate black ink doodle art. The setting is bright and airy in a minimalist cafe workspace, focusing on tactile analog drawing.",
@@ -37,6 +47,11 @@ const INITIAL_ENTRIES: GalleryEntry[] = [
   {
     id: 3,
     imageUrl: "https://nrpql5sstrbjjyra.public.blob.vercel-storage.com/ptb3.jpg",
+    images: [
+      "https://nrpql5sstrbjjyra.public.blob.vercel-storage.com/ptb3.jpg",
+      "https://images.unsplash.com/photo-1554080353-a576cf803bda?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=60"
+    ],
     title: "Analog Photobooth strip",
     category: "Photos",
     description: "Nostalgic film photobooth strip lying next to pencils. Capturing happy smiles, fun poses, and vintage memories with friends. Pure organic scrapbook vibe.",
@@ -50,6 +65,11 @@ const INITIAL_ENTRIES: GalleryEntry[] = [
   {
     id: 4,
     imageUrl: "https://lh3.googleusercontent.com/aida-public/AB6AXuC-5ERtKKJTV-Dw5KQMCYuxU4y2BIgAqEdhhdt0J-huYAIXJVKscNrCBwNLCipCMbZ9C-wj6eoIhUg1kAlynNI1ZZNVV62Fw-19R4b2gOlfKRr_Wu78JGhLaCp3VxnDxNsTShQgXOrJE71HvlA1MHi0qe6ejPLR5RB0OE7UppmuUuvJrRo1_HtdwbyJ82BEz-fHibGsnNhNaGxsr0FnAwM68ZutjjbW7fnTsigWGiGizTYpwWjQ07OXtcoI4b_gG5bOHcIkY8k36Q",
+    images: [
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuC-5ERtKKJTV-Dw5KQMCYuxU4y2BIgAqEdhhdt0J-huYAIXJVKscNrCBwNLCipCMbZ9C-wj6eoIhUg1kAlynNI1ZZNVV62Fw-19R4b2gOlfKRr_Wu78JGhLaCp3VxnDxNsTShQgXOrJE71HvlA1MHi0qe6ejPLR5RB0OE7UppmuUuvJrRo1_HtdwbyJ82BEz-fHibGsnNhNaGxsr0FnAwM68ZutjjbW7fnTsigWGiGizTYpwWjQ07OXtcoI4b_gG5bOHcIkY8k36Q",
+      "https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1562240020-ce31ccb0fa7d?w=600&auto=format&fit=crop&q=60"
+    ],
     title: "Stationery tape collection",
     category: "Crafts",
     description: "A colorful collection of washi tape rolls stacked on a desk. Patterns include stripes, polka dots, and floral motifs - essential tools for decorating scrapbooks.",
@@ -63,6 +83,11 @@ const INITIAL_ENTRIES: GalleryEntry[] = [
   {
     id: 5,
     imageUrl: "https://lh3.googleusercontent.com/aida-public/AB6AXuATLehqdJ1G0_37t8DVpzbb5ggCKkrwgr6uRENCvOkju2BppCXfx48JyK2v9cvdLJagN_PE7w_qMRjnatyasHfZOMQMxxPHFOXHWPPhDpNQIZIUEchVvz_GR6pVjoIHAWd1jC864Bb7cJhHtxuHTdwSaWRzVwryj_y3FO3Ay7VG5YTuPEBHZizuFI6jhkfyJ6Um2Mn9wrt13gePs00YDvpnut3J140v6-uPlasQ2n6tRi16VV_C7AOTJycvEELBsMQRBw1wSltPeA",
+    images: [
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuATLehqdJ1G0_37t8DVpzbb5ggCKkrwgr6uRENCvOkju2BppCXfx48JyK2v9cvdLJagN_PE7w_qMRjnatyasHfZOMQMxxPHFOXHWPPhDpNQIZIUEchVvz_GR6pVjoIHAWd1jC864Bb7cJhHtxuHTdwSaWRzVwryj_y3FO3Ay7VG5YTuPEBHZizuFI6jhkfyJ6Um2Mn9wrt13gePs00YDvpnut3J140v6-uPlasQ2n6tRi16VV_C7AOTJycvEELBsMQRBw1wSltPeA",
+      "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=60"
+    ],
     title: "Pastel watercolor wash",
     category: "Painting",
     description: "Abstract watercolor painting in soft pastel green, blue, and yellow hues bleeding organically into thick textured cold press paper. Handcrafted art.",
@@ -76,6 +101,11 @@ const INITIAL_ENTRIES: GalleryEntry[] = [
   {
     id: 6,
     imageUrl: "https://lh3.googleusercontent.com/aida-public/AB6AXuBqJJ-RvLmVAHAEFX6hUR2GqYz1MrH4p27cA0htH6FW3XvLvt7Hri43kBSev-ocE3m7WlSwiT9MWUPNOGlhjS2_KeH2GNjRZ1sm88KWVY88bLGQ8RsDq27D2IhWuvLd5JnFYL6y_dmZ0lERHJTg8QHZucLmMxCYVNosjwBHQcoFNvVRkSY_Eb-mfn3FAJE-S6tAMt9pXmmzY-bfE8bNlxyi9iDrDv-GS3Ty3OdH8pbnDriQ_xLy1jWptDcY0DQKaLTtFEhNAdp8dg",
+    images: [
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuBqJJ-RvLmVAHAEFX6hUR2GqYz1MrH4p27cA0htH6FW3XvLvt7Hri43kBSev-ocE3m7WlSwiT9MWUPNOGlhjS2_KeH2GNjRZ1sm88KWVY88bLGQ8RsDq27D2IhWuvLd5JnFYL6y_dmZ0lERHJTg8QHZucLmMxCYVNosjwBHQcoFNvVRkSY_Eb-mfn3FAJE-S6tAMt9pXmmzY-bfE8bNlxyi9iDrDv-GS3Ty3OdH8pbnDriQ_xLy1jWptDcY0DQKaLTtFEhNAdp8dg",
+      "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=600&auto=format&fit=crop&q=60"
+    ],
     title: "Analog memory keep",
     category: "Photos",
     description: "A vintage film camera lying next to scattered physical polaroid photos on a wooden table. Nostalgic storytelling at its best.",
@@ -89,6 +119,11 @@ const INITIAL_ENTRIES: GalleryEntry[] = [
   {
     id: 7,
     imageUrl: "/scrapbook_flowers.png",
+    images: [
+      "/scrapbook_flowers.png",
+      "https://images.unsplash.com/photo-1525310072745-f49212b5ac6d?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&auto=format&fit=crop&q=60"
+    ],
     title: "Pressed Garden Flowers",
     category: "Crafts",
     description: "Delicate dried pressed flowers arranged beautifully on a warm tea-stained vintage notebook page, with hand-written thoughts and cute tiny tape decorations.",
@@ -102,6 +137,11 @@ const INITIAL_ENTRIES: GalleryEntry[] = [
   {
     id: 8,
     imageUrl: "/watercolor_palette.png",
+    images: [
+      "/watercolor_palette.png",
+      "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=600&auto=format&fit=crop&q=60"
+    ],
     title: "Vibrant Watercolor Wash",
     category: "Painting",
     description: "A cozy studio desk setup showing a messy watercolor paint palette, wet brushes, and organic color gradients bleeding into thick textured artist paper.",
@@ -115,6 +155,11 @@ const INITIAL_ENTRIES: GalleryEntry[] = [
   {
     id: 9,
     imageUrl: "/travel_polaroids.png",
+    images: [
+      "/travel_polaroids.png",
+      "https://images.unsplash.com/photo-1473116763269-255ea7607cbe?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=600&auto=format&fit=crop&q=60"
+    ],
     title: "Seaside Travel Memories",
     category: "Photos",
     description: "Physical Polaroid snaps from past adventures layout on a rustic blue wooden background, featuring beautiful sunny shorelines and coconut palm tree shadows.",

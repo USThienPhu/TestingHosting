@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { GalleryEntry } from "./GalleryGrid";
 
 interface LightboxProps {
@@ -18,7 +18,24 @@ export default function Lightbox({
   onNext,
   onLikeToggle,
 }: LightboxProps) {
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  // Reset active image index when entry changes
+  useEffect(() => {
+    setActiveImageIndex(0);
+  }, [entry]);
+
   if (!entry) return null;
+
+  const handlePrevImage = () => {
+    if (!entry.images || entry.images.length <= 1) return;
+    setActiveImageIndex((prev) => (prev === 0 ? entry.images.length - 1 : prev - 1));
+  };
+
+  const handleNextImage = () => {
+    if (!entry.images || entry.images.length <= 1) return;
+    setActiveImageIndex((prev) => (prev === entry.images.length - 1 ? 0 : prev + 1));
+  };
 
   // Prevent event propagation for overlay clicks
   const handleModalClick = (e: React.MouseEvent) => {
@@ -79,22 +96,73 @@ export default function Lightbox({
         </button>
 
         {/* Image Panel */}
-        <div className="flex-1 flex flex-col justify-center items-center relative">
+        <div className="flex-1 flex flex-col justify-center items-center relative w-full">
           {/* Washi tape on the top left */}
           <div className={`washi-tape ${entry.tapeColor} w-28 -top-3 left-4 -rotate-12`}></div>
 
           {/* Polaroid wrap */}
-          <div className="bg-white p-3 pb-10 md:p-4 md:pb-12 border-2 border-ink-black shadow-[4px_4px_0px_0px_rgba(45,52,54,1)] w-full max-h-[40vh] md:max-h-[60vh] flex flex-col items-center justify-center">
-            <div className="border border-ink-black/10 overflow-hidden w-full h-full flex items-center justify-center bg-neutral-100">
+          <div className="bg-white p-3 pb-4 md:p-4 md:pb-6 border-2 border-ink-black shadow-[4px_4px_0px_0px_rgba(45,52,54,1)] w-full flex flex-col items-center justify-center">
+            {/* Main Image Viewport with inner arrow overlay */}
+            <div className="border border-ink-black/10 overflow-hidden w-full aspect-[4/3] max-h-[35vh] md:max-h-[45vh] flex items-center justify-center bg-neutral-100 relative group/img">
               <img
-                src={entry.imageUrl}
+                src={entry.images[activeImageIndex] || entry.imageUrl}
                 alt={entry.title}
-                className="max-h-[30vh] md:max-h-[45vh] w-full object-contain"
+                className="max-h-full max-w-full object-contain select-none"
               />
-            </div>
-          </div>
+              
+              {entry.images && entry.images.length > 1 && (
+                <>
+                  {/* Left Inner Arrow */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handlePrevImage();
+                    }}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white border-2 border-ink-black text-ink-black p-1.5 rounded-full cursor-pointer transition-all active:scale-95 z-10 shadow-[2px_2px_0px_0px_rgba(45,52,54,1)] flex items-center justify-center"
+                  >
+                    <span className="material-symbols-outlined text-sm font-bold block">chevron_left</span>
+                  </button>
+                  
+                  {/* Right Inner Arrow */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNextImage();
+                    }}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white border-2 border-ink-black text-ink-black p-1.5 rounded-full cursor-pointer transition-all active:scale-95 z-10 shadow-[2px_2px_0px_0px_rgba(45,52,54,1)] flex items-center justify-center"
+                  >
+                    <span className="material-symbols-outlined text-sm font-bold block">chevron_right</span>
+                  </button>
 
+                  {/* Image Counter Badge */}
+                  <div className="absolute bottom-2 right-2 bg-ink-black text-white font-body text-[10px] px-2 py-0.5 rounded-sm border border-white/20 select-none">
+                    {activeImageIndex + 1} / {entry.images.length}
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Thumbnail Strip inside the Polaroid (like physical mini prints / film strip) */}
+            {entry.images && entry.images.length > 1 && (
+              <div className="flex gap-2.5 mt-3 justify-center w-full overflow-x-auto py-1 select-none scrollbar-thin">
+                {entry.images.map((imgUrl, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setActiveImageIndex(idx)}
+                    className={`w-12 h-9 md:w-16 md:h-12 border-2 rounded-sm overflow-hidden flex-shrink-0 transition-all cursor-pointer ${
+                      idx === activeImageIndex
+                        ? "border-coral-orange scale-105 shadow-[2px_2px_0px_0px_rgba(45,52,54,0.4)]"
+                        : "border-ink-black/20 hover:border-ink-black"
+                    }`}
+                  >
+                    <img src={imgUrl} className="w-full h-full object-cover" alt="" />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
+
 
         {/* Content Details Panel */}
         <div className="w-full md:w-[320px] flex flex-col justify-between pl-0 md:pl-4">
