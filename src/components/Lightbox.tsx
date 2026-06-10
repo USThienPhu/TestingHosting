@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { GalleryEntry } from "./GalleryGrid";
 
 interface LightboxProps {
@@ -9,6 +9,7 @@ interface LightboxProps {
   onPrev: () => void;
   onNext: () => void;
   onLikeToggle: (id: number) => void;
+  onEditEntryImages: (albumId: number, newImages: string[]) => void;
 }
 
 export default function Lightbox({
@@ -17,12 +18,19 @@ export default function Lightbox({
   onPrev,
   onNext,
   onLikeToggle,
+  onEditEntryImages,
 }: LightboxProps) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editUploading, setEditUploading] = useState(false);
+  const [editError, setEditError] = useState<string | null>(null);
+  const editFileInputRef = useRef<HTMLInputElement>(null);
 
-  // Reset active image index when entry changes
+  // Reset active image index and editing state when entry changes
   useEffect(() => {
     setActiveImageIndex(0);
+    setIsEditing(false);
+    setEditError(null);
   }, [entry]);
 
   if (!entry) return null;
@@ -35,6 +43,89 @@ export default function Lightbox({
   const handleNextImage = () => {
     if (!entry.images || entry.images.length <= 1) return;
     setActiveImageIndex((prev) => (prev === entry.images.length - 1 ? 0 : prev + 1));
+  };
+
+  const moveImage = (index: number, direction: number) => {
+    if (!entry.images) return;
+    const newIndex = index + direction;
+    if (newIndex < 0 || newIndex >= entry.images.length) return;
+
+    const newImages = [...entry.images];
+    const temp = newImages[index];
+    newImages[index] = newImages[newIndex];
+    newImages[newIndex] = temp;
+
+    onEditEntryImages(entry.id, newImages);
+
+    // Keep the active image in focus
+    if (activeImageIndex === index) {
+      setActiveImageIndex(newIndex);
+    } else if (activeImageIndex === newIndex) {
+      setActiveImageIndex(index);
+    }
+  };
+
+  const deleteImage = (index: number) => {
+    if (!entry.images) return;
+    if (entry.images.length <= 1) {
+      setEditError("An album must have at least one image!");
+      return;
+    }
+
+    const newImages = entry.images.filter((_, idx) => idx !== index);
+    onEditEntryImages(entry.id, newImages);
+
+    // Adjust active image index
+    if (activeImageIndex >= newImages.length) {
+      setActiveImageIndex(newImages.length - 1);
+    }
+  };
+
+  const handleLocalAddImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!entry.images || !e.target.files || !e.target.files[0]) return;
+    const file = e.target.files[0];
+
+    if (!file.type.startsWith("image/")) {
+      setEditError("Please select a valid image file.");
+      return;
+    }
+
+    setEditUploading(true);
+    setEditError(null);
+
+    try {
+      const response = await fetch(`/api/upload?filename=${encodeURIComponent(file.name)}`, {
+        method: "POST",
+        body: file,
+        headers: {
+          "content-type": file.type,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to upload image.");
+      }
+
+      const result = await response.json();
+      if (!result.url) {
+        throw new Error("No URL returned from upload response.");
+      }
+
+      const newImages = [...entry.images, result.url];
+      onEditEntryImages(entry.id, newImages);
+
+      // Focus on the newly uploaded image
+      setActiveImageIndex(newImages.length - 1);
+    } catch (err: any) {
+      console.error(err);
+      setEditError(err.message || "Failed to upload image.");
+    } finally {
+      setEditUploading(false);
+      if (editFileInputRef.current) {
+        editFileInputRef.current.value = "";
+      }
+    }
   };
 
   // Prevent event propagation for overlay clicks
@@ -70,7 +161,6 @@ export default function Lightbox({
         <span className="material-symbols-outlined text-2xl font-bold block">east</span>
       </button>
 
-
       {/* Main Sketchbook Page Modal */}
       <div
         onClick={handleModalClick}
@@ -90,13 +180,13 @@ export default function Lightbox({
         <button
           onClick={onClose}
           aria-label="Close"
-          className="absolute top-4 right-4 md:top-6 md:right-6 bg-white border-2 border-ink-black shadow-[2px_2px_0px_0px_rgba(45,52,54,1)] w-10 h-10 rounded-full flex items-center justify-center hover:bg-coral-orange hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all cursor-pointer text-ink-black"
+          className="absolute top-4 right-4 md:top-6 md:right-6 bg-white border-2 border-ink-black shadow-[2px_2px_0px_0px_rgba(45,52,54,1)] w-10 h-10 rounded-full flex items-center justify-center hover:bg-coral-orange hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all cursor-pointer text-ink-black z-50"
         >
           <span className="material-symbols-outlined text-xl font-bold">close</span>
         </button>
 
         {/* Image Panel */}
-        <div className="flex-1 flex flex-col justify-center items-center relative w-full">
+        <div className="flex-1 flex flex-col justify-center items-center relative w-full mt-6 md:mt-0">
           {/* Washi tape on the top left */}
           <div className={`washi-tape ${entry.tapeColor} w-28 -top-3 left-4 -rotate-12`}></div>
 
@@ -163,89 +253,207 @@ export default function Lightbox({
           </div>
         </div>
 
-
         {/* Content Details Panel */}
-        <div className="w-full md:w-[320px] flex flex-col justify-between pl-0 md:pl-4">
-          <div className="flex flex-col">
-            {/* Category badge */}
-            <span className="bg-pastel-green text-ink-black border border-ink-black text-xs font-body font-bold px-3 py-1 rounded-full w-max mb-4">
-              #{entry.category.toLowerCase()}
-            </span>
-
-            {/* Title */}
-            <h2 className="font-headline text-2xl md:text-3xl text-ink-black drop-shadow-[2px_2px_0px_rgba(45,52,54,0.1)] leading-tight transform -rotate-1">
-              {entry.title}
-            </h2>
-
-            {/* Date metadata */}
-            <span className="font-body text-xs text-ink-black/40 mt-1 block">
-              Captured on: {entry.date}
-            </span>
-
-            {/* Separator */}
-            <div className="border-b-2 border-dashed border-ink-black/20 my-4"></div>
-
-            {/* Description (retromonospace notebook style) */}
-            <div className="bg-surface-bg p-4 border border-ink-black shadow-[2px_2px_0px_rgba(45,52,54,1)] relative">
-              <p className="font-body text-sm text-ink-black leading-relaxed whitespace-pre-wrap">
-                {entry.description || "No description provided for this diary entry. Write something creative!"}
-              </p>
-              {/* Paperclip graphic decoration */}
-              <span className="material-symbols-outlined absolute -top-4 -right-2 text-ink-black/40 text-3xl rotate-45 pointer-events-none">
-                attach_file
-              </span>
-            </div>
-          </div>
-
-          {/* Interactive footer action items */}
-          <div className="flex flex-col gap-3 mt-6">
-            <div className="flex items-center justify-between border-t border-dashed border-ink-black/20 pt-3">
-
-              {/* Like block */}
-              <button
-                onClick={() => onLikeToggle(entry.id)}
-                className={`flex items-center gap-2 text-sm font-bold transition-all hover:scale-105 cursor-pointer ${
-                  entry.hasLiked ? "text-coral-orange" : "text-ink-black/50 hover:text-coral-orange"
-                }`}
-              >
-                <span 
-                  className="material-symbols-outlined"
-                  style={{ fontVariationSettings: entry.hasLiked ? '"FILL" 1' : '"FILL" 0' }}
-                >
-                  favorite
+        {isEditing ? (
+          /* Album Editor Panel */
+          <div className="w-full md:w-[320px] flex flex-col justify-between pl-0 md:pl-4">
+            <div className="flex flex-col">
+              {/* Category badge & Done Button */}
+              <div className="flex justify-between items-center mb-4 pr-12 md:pr-14">
+                <span className="bg-pastel-green text-ink-black border border-ink-black text-xs font-body font-bold px-3 py-1 rounded-full w-max">
+                  #{entry.category.toLowerCase()}
                 </span>
-                <span>{entry.likes} Likes</span>
-              </button>
-
-              {/* Inline Navigation for Mobile */}
-              <div className="flex md:hidden items-center gap-2.5">
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onPrev();
-                  }}
-                  className="bg-paper-yellow border-2 border-ink-black p-1.5 rounded-full hover:bg-pastel-green active:scale-95 transition-all text-ink-black cursor-pointer"
+                  onClick={() => setIsEditing(false)}
+                  disabled={editUploading}
+                  aria-label="Done editing"
+                  className="flex items-center justify-center bg-pastel-green text-ink-black border-2 border-ink-black shadow-[2px_2px_0px_0px_rgba(45,52,54,1)] w-8 h-8 hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all cursor-pointer rounded-full disabled:opacity-50"
                 >
-                  <span className="material-symbols-outlined text-sm font-bold block">west</span>
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onNext();
-                  }}
-                  className="bg-paper-yellow border-2 border-ink-black p-1.5 rounded-full hover:bg-pastel-green active:scale-95 transition-all text-ink-black cursor-pointer"
-                >
-                  <span className="material-symbols-outlined text-sm font-bold block">east</span>
+                  <span className="material-symbols-outlined text-sm font-bold">check</span>
                 </button>
               </div>
 
-              <span className="text-xs font-body text-ink-black/40 font-bold">
-                ID: #{entry.id}
-              </span>
+              <h3 className="font-headline text-xl text-ink-black mb-3">Edit Album Photos</h3>
+              
+              {/* Album List of images */}
+              <div className="flex flex-col gap-3 max-h-[42vh] overflow-y-auto pr-1">
+                {entry.images.map((imgUrl, idx) => (
+                  <div key={idx} className="flex items-center gap-3 bg-white p-2 border border-ink-black shadow-[2px_2px_0px_0px_rgba(45,52,54,1)] select-none">
+                    <img src={imgUrl} className="w-12 h-12 object-cover border border-ink-black/20" alt="" />
+                    <div className="flex-grow flex items-center justify-between">
+                      <span className="font-body text-[11px] text-ink-black/60 font-bold">Photo #{idx + 1}</span>
+                      
+                      <div className="flex items-center gap-1">
+                        {/* Move Up */}
+                        <button
+                          type="button"
+                          disabled={idx === 0 || editUploading}
+                          onClick={() => moveImage(idx, -1)}
+                          className="p-1 text-ink-black hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer rounded-sm flex items-center justify-center"
+                        >
+                          <span className="material-symbols-outlined text-sm font-bold">arrow_upward</span>
+                        </button>
+                        {/* Move Down */}
+                        <button
+                          type="button"
+                          disabled={idx === entry.images.length - 1 || editUploading}
+                          onClick={() => moveImage(idx, 1)}
+                          className="p-1 text-ink-black hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer rounded-sm flex items-center justify-center"
+                        >
+                          <span className="material-symbols-outlined text-sm font-bold">arrow_downward</span>
+                        </button>
+                        {/* Delete */}
+                        <button
+                          type="button"
+                          disabled={entry.images.length <= 1 || editUploading}
+                          onClick={() => deleteImage(idx)}
+                          className="p-1 text-red-600 hover:bg-red-50 disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer rounded-sm flex items-center justify-center"
+                        >
+                          <span className="material-symbols-outlined text-sm font-bold">delete</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              {/* Add Image Button */}
+              <div className="mt-4">
+                <input
+                  ref={editFileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleLocalAddImage}
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => editFileInputRef.current?.click()}
+                  disabled={editUploading}
+                  className="w-full bg-white border-2 border-ink-black shadow-[3px_3px_0px_0px_rgba(45,52,54,1)] p-2.5 font-headline text-xs font-bold hover:bg-pastel-green hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all cursor-pointer rounded-sm flex items-center justify-center gap-1.5"
+                >
+                  {editUploading ? (
+                    <>
+                      <svg className="animate-spin h-3.5 w-3.5 text-ink-black" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      <span>Uploading...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="material-symbols-outlined text-sm font-bold">add_photo_alternate</span>
+                      <span>Add Image to Album</span>
+                    </>
+                  )}
+                </button>
+              </div>
 
+              {editError && (
+                <div className="bg-red-50 border border-red-200 text-red-700 font-body text-[10px] px-2 py-1 rounded-sm flex items-center gap-1 mt-3">
+                  <span className="material-symbols-outlined text-xs font-bold">error</span>
+                  <span>{editError}</span>
+                </div>
+              )}
+            </div>
+
+            <div className="text-[10px] text-ink-black/40 mt-4 text-center font-bold">
+              ID: #{entry.id} • editing mode
             </div>
           </div>
-        </div>
+        ) : (
+          /* Content Details Panel (Standard View) */
+          <div className="w-full md:w-[320px] flex flex-col justify-between pl-0 md:pl-4">
+            <div className="flex flex-col">
+              {/* Category badge & Edit Button */}
+              <div className="flex justify-between items-center mb-4 pr-12 md:pr-14">
+                <span className="bg-pastel-green text-ink-black border border-ink-black text-xs font-body font-bold px-3 py-1 rounded-full w-max">
+                  #{entry.category.toLowerCase()}
+                </span>
+                <button
+                  onClick={() => setIsEditing(true)}
+                  aria-label="Edit Album"
+                  className="flex items-center justify-center bg-white border-2 border-ink-black shadow-[2px_2px_0px_0px_rgba(45,52,54,1)] w-8 h-8 hover:bg-pastel-green hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all cursor-pointer rounded-full"
+                >
+                  <span className="material-symbols-outlined text-sm font-bold">edit</span>
+                </button>
+              </div>
+
+              {/* Title */}
+              <h2 className="font-headline text-2xl md:text-3xl text-ink-black drop-shadow-[2px_2px_0px_rgba(45,52,54,0.1)] leading-tight transform -rotate-1">
+                {entry.title}
+              </h2>
+
+              {/* Date metadata */}
+              <span className="font-body text-xs text-ink-black/40 mt-1 block">
+                Captured on: {entry.date}
+              </span>
+
+              {/* Separator */}
+              <div className="border-b-2 border-dashed border-ink-black/20 my-4"></div>
+
+              {/* Description (retromonospace notebook style) */}
+              <div className="bg-surface-bg p-4 border border-ink-black shadow-[2px_2px_0px_rgba(45,52,54,1)] relative">
+                <p className="font-body text-sm text-ink-black leading-relaxed whitespace-pre-wrap">
+                  {entry.description || "No description provided for this diary entry. Write something creative!"}
+                </p>
+                {/* Paperclip graphic decoration */}
+                <span className="material-symbols-outlined absolute -top-4 -right-2 text-ink-black/40 text-3xl rotate-45 pointer-events-none">
+                  attach_file
+                </span>
+              </div>
+            </div>
+
+            {/* Interactive footer action items */}
+            <div className="flex flex-col gap-3 mt-6">
+              <div className="flex items-center justify-between border-t border-dashed border-ink-black/20 pt-3">
+
+                {/* Like block */}
+                <button
+                  onClick={() => onLikeToggle(entry.id)}
+                  className={`flex items-center gap-2 text-sm font-bold transition-all hover:scale-105 cursor-pointer ${
+                    entry.hasLiked ? "text-coral-orange" : "text-ink-black/50 hover:text-coral-orange"
+                  }`}
+                >
+                  <span 
+                    className="material-symbols-outlined"
+                    style={{ fontVariationSettings: entry.hasLiked ? '"FILL" 1' : '"FILL" 0' }}
+                  >
+                    favorite
+                  </span>
+                  <span>{entry.likes} Likes</span>
+                </button>
+
+                {/* Inline Navigation for Mobile */}
+                <div className="flex md:hidden items-center gap-2.5">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onPrev();
+                    }}
+                    className="bg-paper-yellow border-2 border-ink-black p-1.5 rounded-full hover:bg-pastel-green active:scale-95 transition-all text-ink-black cursor-pointer"
+                  >
+                    <span className="material-symbols-outlined text-sm font-bold block">west</span>
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onNext();
+                    }}
+                    className="bg-paper-yellow border-2 border-ink-black p-1.5 rounded-full hover:bg-pastel-green active:scale-95 transition-all text-ink-black cursor-pointer"
+                  >
+                    <span className="material-symbols-outlined text-sm font-bold block">east</span>
+                  </button>
+                </div>
+
+                <span className="text-xs font-body text-ink-black/40 font-bold">
+                  ID: #{entry.id}
+                </span>
+
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

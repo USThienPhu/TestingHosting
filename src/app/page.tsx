@@ -338,8 +338,34 @@ export default function Home() {
           onPrev={handlePrevEntry}
           onNext={handleNextEntry}
           onLikeToggle={(id) => handleLikeToggle(id)}
+          onEditEntryImages={(albumId, newImages) => {
+            setEntries((prev) =>
+              prev.map((entry) => {
+                if (entry.id === albumId) {
+                  return {
+                    ...entry,
+                    images: newImages,
+                    imageUrl: newImages[0] || entry.imageUrl,
+                  };
+                }
+                return entry;
+              })
+            );
+            
+            setSelectedEntry((prev) => {
+              if (prev && prev.id === albumId) {
+                return {
+                  ...prev,
+                  images: newImages,
+                  imageUrl: newImages[0] || prev.imageUrl,
+                };
+              }
+              return prev;
+            });
+          }}
         />
       )}
+
 
       {/* Upload Modal */}
       <UploadModal
