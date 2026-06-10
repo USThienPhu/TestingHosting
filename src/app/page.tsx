@@ -5,12 +5,18 @@ import Header from "../components/Header";
 import HeroCarousel from "../components/HeroCarousel";
 import GalleryGrid, { GalleryEntry } from "../components/GalleryGrid";
 import Lightbox from "../components/Lightbox";
+import UploadModal from "../components/UploadModal";
 
 // Initial mock entries featuring the user's images and decorative scrapbook photos
 const INITIAL_ENTRIES: GalleryEntry[] = [
   {
     id: 1,
     imageUrl: "https://nrpql5sstrbjjyra.public.blob.vercel-storage.com/ptb2.jpg",
+    images: [
+      "https://nrpql5sstrbjjyra.public.blob.vercel-storage.com/ptb2.jpg",
+      "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1544816155-12df9643f363?w=600&auto=format&fit=crop&q=60"
+    ],
     title: "Morning sketches - Day 42",
     category: "Sketches",
     description: "A vibrant, messy artist's desk filled with watercolor palettes, scattered brushes, and a half-finished illustration on thick textured paper. Morning sunlight casting soft shadows.",
@@ -24,6 +30,11 @@ const INITIAL_ENTRIES: GalleryEntry[] = [
   {
     id: 2,
     imageUrl: "https://nrpql5sstrbjjyra.public.blob.vercel-storage.com/z6344277640904_e15bb3bfd59b930157923c6992070a46.jpg",
+    images: [
+      "https://nrpql5sstrbjjyra.public.blob.vercel-storage.com/z6344277640904_e15bb3bfd59b930157923c6992070a46.jpg",
+      "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1498804103079-a6351b050096?w=600&auto=format&fit=crop&q=60"
+    ],
     title: "Cafe inspiration",
     category: "Sketches",
     description: "Hands holding a thick worn sketchbook filled with intricate black ink doodle art. The setting is bright and airy in a minimalist cafe workspace, focusing on tactile analog drawing.",
@@ -37,6 +48,11 @@ const INITIAL_ENTRIES: GalleryEntry[] = [
   {
     id: 3,
     imageUrl: "https://nrpql5sstrbjjyra.public.blob.vercel-storage.com/ptb3.jpg",
+    images: [
+      "https://nrpql5sstrbjjyra.public.blob.vercel-storage.com/ptb3.jpg",
+      "https://images.unsplash.com/photo-1554080353-a576cf803bda?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=60"
+    ],
     title: "Analog Photobooth strip",
     category: "Photos",
     description: "Nostalgic film photobooth strip lying next to pencils. Capturing happy smiles, fun poses, and vintage memories with friends. Pure organic scrapbook vibe.",
@@ -50,6 +66,11 @@ const INITIAL_ENTRIES: GalleryEntry[] = [
   {
     id: 4,
     imageUrl: "https://lh3.googleusercontent.com/aida-public/AB6AXuC-5ERtKKJTV-Dw5KQMCYuxU4y2BIgAqEdhhdt0J-huYAIXJVKscNrCBwNLCipCMbZ9C-wj6eoIhUg1kAlynNI1ZZNVV62Fw-19R4b2gOlfKRr_Wu78JGhLaCp3VxnDxNsTShQgXOrJE71HvlA1MHi0qe6ejPLR5RB0OE7UppmuUuvJrRo1_HtdwbyJ82BEz-fHibGsnNhNaGxsr0FnAwM68ZutjjbW7fnTsigWGiGizTYpwWjQ07OXtcoI4b_gG5bOHcIkY8k36Q",
+    images: [
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuC-5ERtKKJTV-Dw5KQMCYuxU4y2BIgAqEdhhdt0J-huYAIXJVKscNrCBwNLCipCMbZ9C-wj6eoIhUg1kAlynNI1ZZNVV62Fw-19R4b2gOlfKRr_Wu78JGhLaCp3VxnDxNsTShQgXOrJE71HvlA1MHi0qe6ejPLR5RB0OE7UppmuUuvJrRo1_HtdwbyJ82BEz-fHibGsnNhNaGxsr0FnAwM68ZutjjbW7fnTsigWGiGizTYpwWjQ07OXtcoI4b_gG5bOHcIkY8k36Q",
+      "https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1562240020-ce31ccb0fa7d?w=600&auto=format&fit=crop&q=60"
+    ],
     title: "Stationery tape collection",
     category: "Crafts",
     description: "A colorful collection of washi tape rolls stacked on a desk. Patterns include stripes, polka dots, and floral motifs - essential tools for decorating scrapbooks.",
@@ -63,6 +84,11 @@ const INITIAL_ENTRIES: GalleryEntry[] = [
   {
     id: 5,
     imageUrl: "https://lh3.googleusercontent.com/aida-public/AB6AXuATLehqdJ1G0_37t8DVpzbb5ggCKkrwgr6uRENCvOkju2BppCXfx48JyK2v9cvdLJagN_PE7w_qMRjnatyasHfZOMQMxxPHFOXHWPPhDpNQIZIUEchVvz_GR6pVjoIHAWd1jC864Bb7cJhHtxuHTdwSaWRzVwryj_y3FO3Ay7VG5YTuPEBHZizuFI6jhkfyJ6Um2Mn9wrt13gePs00YDvpnut3J140v6-uPlasQ2n6tRi16VV_C7AOTJycvEELBsMQRBw1wSltPeA",
+    images: [
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuATLehqdJ1G0_37t8DVpzbb5ggCKkrwgr6uRENCvOkju2BppCXfx48JyK2v9cvdLJagN_PE7w_qMRjnatyasHfZOMQMxxPHFOXHWPPhDpNQIZIUEchVvz_GR6pVjoIHAWd1jC864Bb7cJhHtxuHTdwSaWRzVwryj_y3FO3Ay7VG5YTuPEBHZizuFI6jhkfyJ6Um2Mn9wrt13gePs00YDvpnut3J140v6-uPlasQ2n6tRi16VV_C7AOTJycvEELBsMQRBw1wSltPeA",
+      "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=60"
+    ],
     title: "Pastel watercolor wash",
     category: "Painting",
     description: "Abstract watercolor painting in soft pastel green, blue, and yellow hues bleeding organically into thick textured cold press paper. Handcrafted art.",
@@ -76,6 +102,11 @@ const INITIAL_ENTRIES: GalleryEntry[] = [
   {
     id: 6,
     imageUrl: "https://lh3.googleusercontent.com/aida-public/AB6AXuBqJJ-RvLmVAHAEFX6hUR2GqYz1MrH4p27cA0htH6FW3XvLvt7Hri43kBSev-ocE3m7WlSwiT9MWUPNOGlhjS2_KeH2GNjRZ1sm88KWVY88bLGQ8RsDq27D2IhWuvLd5JnFYL6y_dmZ0lERHJTg8QHZucLmMxCYVNosjwBHQcoFNvVRkSY_Eb-mfn3FAJE-S6tAMt9pXmmzY-bfE8bNlxyi9iDrDv-GS3Ty3OdH8pbnDriQ_xLy1jWptDcY0DQKaLTtFEhNAdp8dg",
+    images: [
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuBqJJ-RvLmVAHAEFX6hUR2GqYz1MrH4p27cA0htH6FW3XvLvt7Hri43kBSev-ocE3m7WlSwiT9MWUPNOGlhjS2_KeH2GNjRZ1sm88KWVY88bLGQ8RsDq27D2IhWuvLd5JnFYL6y_dmZ0lERHJTg8QHZucLmMxCYVNosjwBHQcoFNvVRkSY_Eb-mfn3FAJE-S6tAMt9pXmmzY-bfE8bNlxyi9iDrDv-GS3Ty3OdH8pbnDriQ_xLy1jWptDcY0DQKaLTtFEhNAdp8dg",
+      "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=600&auto=format&fit=crop&q=60"
+    ],
     title: "Analog memory keep",
     category: "Photos",
     description: "A vintage film camera lying next to scattered physical polaroid photos on a wooden table. Nostalgic storytelling at its best.",
@@ -86,12 +117,96 @@ const INITIAL_ENTRIES: GalleryEntry[] = [
     likes: 35,
     hasLiked: false,
   },
+  {
+    id: 7,
+    imageUrl: "/scrapbook_flowers.png",
+    images: [
+      "/scrapbook_flowers.png",
+      "https://images.unsplash.com/photo-1525310072745-f49212b5ac6d?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&auto=format&fit=crop&q=60"
+    ],
+    title: "Pressed Garden Flowers",
+    category: "Crafts",
+    description: "Delicate dried pressed flowers arranged beautifully on a warm tea-stained vintage notebook page, with hand-written thoughts and cute tiny tape decorations.",
+    date: "May 8, 2026",
+    tapeColor: "tape-coral",
+    tapeRotation: "rotate-6",
+    cardRotation: "rotate-2",
+    likes: 15,
+    hasLiked: false,
+  },
+  {
+    id: 8,
+    imageUrl: "/watercolor_palette.png",
+    images: [
+      "/watercolor_palette.png",
+      "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=600&auto=format&fit=crop&q=60"
+    ],
+    title: "Vibrant Watercolor Wash",
+    category: "Painting",
+    description: "A cozy studio desk setup showing a messy watercolor paint palette, wet brushes, and organic color gradients bleeding into thick textured artist paper.",
+    date: "May 5, 2026",
+    tapeColor: "tape-green",
+    tapeRotation: "-rotate-12",
+    cardRotation: "-rotate-2",
+    likes: 27,
+    hasLiked: false,
+  },
+  {
+    id: 9,
+    imageUrl: "/travel_polaroids.png",
+    images: [
+      "/travel_polaroids.png",
+      "https://images.unsplash.com/photo-1473116763269-255ea7607cbe?w=600&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=600&auto=format&fit=crop&q=60"
+    ],
+    title: "Seaside Travel Memories",
+    category: "Photos",
+    description: "Physical Polaroid snaps from past adventures layout on a rustic blue wooden background, featuring beautiful sunny shorelines and coconut palm tree shadows.",
+    date: "May 1, 2026",
+    tapeColor: "tape-yellow",
+    tapeRotation: "rotate-[15deg]",
+    cardRotation: "rotate-1",
+    likes: 39,
+    hasLiked: false,
+  },
 ];
+
 
 export default function Home() {
   const [entries, setEntries] = useState<GalleryEntry[]>(INITIAL_ENTRIES);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedEntry, setSelectedEntry] = useState<GalleryEntry | null>(null);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+
+  const handleUploadSuccess = (albumId: number, imageUrl: string) => {
+    setEntries((prev) => {
+      const updated = prev.map((entry) => {
+        if (entry.id === albumId) {
+          return {
+            ...entry,
+            images: [...entry.images, imageUrl],
+          };
+        }
+        return entry;
+      });
+
+      // Update selected entry state if it is currently open in Lightbox
+      setSelectedEntry((prevSelected) => {
+        if (prevSelected && prevSelected.id === albumId) {
+          return {
+            ...prevSelected,
+            images: [...prevSelected.images, imageUrl],
+          };
+        }
+        return prevSelected;
+      });
+
+      return updated;
+    });
+  };
+
 
   // Manage Liking entries
   const handleLikeToggle = (id: number, e?: React.MouseEvent) => {
@@ -142,7 +257,8 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-paper-yellow text-ink-black font-body">
       {/* Top Navigation Header bar */}
-      <Header />
+      <Header onAddClick={() => setIsUploadModalOpen(true)} />
+
 
       {/* Hero Interactive Slide presentation */}
       <HeroCarousel />
@@ -202,7 +318,7 @@ export default function Home() {
         }}
       >
         <div className="font-headline text-lg text-ink-black font-bold mb-2">
-          DoodleDiary Gallery
+          Nheo Phú Collection
         </div>
         <div className="flex flex-wrap justify-center gap-6 text-xs font-bold">
           <a className="hover:text-bright-blue transition-colors" href="#">Privacy Paper</a>
@@ -210,7 +326,7 @@ export default function Home() {
           <a className="hover:text-bright-blue transition-colors" href="#">Contact Ink</a>
         </div>
         <p className="text-[11px] text-ink-black/40 mt-4 font-bold">
-          © {new Date().getFullYear()} Crafted with Love & Washi Tape • DoodleDiary
+          © {new Date().getFullYear()} Crafted with Love & Washi Tape • Nheo Phú Collection
         </p>
       </footer>
 
@@ -222,8 +338,43 @@ export default function Home() {
           onPrev={handlePrevEntry}
           onNext={handleNextEntry}
           onLikeToggle={(id) => handleLikeToggle(id)}
+          onEditEntryImages={(albumId, newImages) => {
+            setEntries((prev) =>
+              prev.map((entry) => {
+                if (entry.id === albumId) {
+                  return {
+                    ...entry,
+                    images: newImages,
+                    imageUrl: newImages[0] || entry.imageUrl,
+                  };
+                }
+                return entry;
+              })
+            );
+            
+            setSelectedEntry((prev) => {
+              if (prev && prev.id === albumId) {
+                return {
+                  ...prev,
+                  images: newImages,
+                  imageUrl: newImages[0] || prev.imageUrl,
+                };
+              }
+              return prev;
+            });
+          }}
         />
       )}
+
+
+      {/* Upload Modal */}
+      <UploadModal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+        albums={entries}
+        onUploadSuccess={handleUploadSuccess}
+      />
     </div>
+
   );
 }

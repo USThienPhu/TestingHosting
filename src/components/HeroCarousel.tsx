@@ -50,24 +50,77 @@ export default function HeroCarousel() {
   };
 
   return (
-    <section className="relative bg-bright-blue pt-16 pb-28 md:pb-36 px-6 md:px-20 overflow-hidden min-h-[60vh] flex flex-col items-center justify-center z-10 select-none">
+    <section className="relative bg-blue-scrapbook pt-16 pb-28 md:pb-36 px-6 md:px-20 overflow-hidden min-h-[60vh] flex flex-col items-center justify-center z-10 select-none">
       {/* Hand-drawn Doodles (Floating decoration) */}
-      <span className="material-symbols-outlined absolute top-10 left-10 text-white/30 text-6xl -rotate-12 pointer-events-none animate-pulse">
-        star
-      </span>
-      <span className="material-symbols-outlined absolute bottom-16 right-12 text-white/30 text-8xl rotate-45 pointer-events-none">
-        palette
-      </span>
-      <span className="material-symbols-outlined absolute top-1/3 right-1/4 text-white/20 text-4xl -rotate-45 pointer-events-none animate-bounce">
-        draw
-      </span>
-      <span className="material-symbols-outlined absolute bottom-1/4 left-16 text-white/20 text-6xl rotate-12 pointer-events-none">
+      
+      {/* Hand-drawn SVG Star (Top Left) */}
+      <svg
+        viewBox="0 0 100 100"
+        className="absolute top-8 left-8 w-16 h-16 text-white/20 fill-none stroke-current stroke-2 pointer-events-none animate-gentle-float hidden md:block"
+        style={{ "--initial-rotate": "-15deg" } as React.CSSProperties}
+      >
+        <path d="M50 10 C50 35, 35 50, 10 50 C35 50, 50 65, 50 90 C50 65, 65 50, 90 50 C65 50, 50 35, 50 10 Z" />
+      </svg>
+
+      {/* Hand-drawn SVG Heart (Bottom Right) */}
+      <svg
+        viewBox="0 0 100 100"
+        className="absolute bottom-16 right-10 w-16 h-16 text-white/25 fill-none stroke-current stroke-2 pointer-events-none animate-gentle-drift hidden md:block"
+        style={{ "--initial-rotate": "12deg" } as React.CSSProperties}
+      >
+        <path d="M50,30 C35,10 10,25 10,50 C10,75 40,85 50,90 C60,85 90,75 90,50 C90,25 65,10 50,30 Z" />
+      </svg>
+
+      {/* Hand-drawn SVG Paper Airplane (Top Right) */}
+      <svg
+        viewBox="0 0 100 100"
+        className="absolute top-10 right-12 w-20 h-20 text-white/20 fill-none stroke-current stroke-2 pointer-events-none animate-gentle-float"
+        style={{ "--initial-rotate": "25deg" } as React.CSSProperties}
+      >
+        <path d="M15 50 L85 20 L55 80 L45 55 Z M45 55 L85 20" />
+        <path d="M45 55 L35 70 L35 58" />
+        <path d="M10 68 Q25 72 30 60 T50 72" strokeDasharray="3 3" />
+      </svg>
+
+      {/* Hand-drawn SVG Pencil (Bottom Left) */}
+      <svg
+        viewBox="0 0 100 100"
+        className="absolute bottom-20 left-10 w-16 h-16 text-white/20 fill-none stroke-current stroke-2 pointer-events-none animate-gentle-drift"
+        style={{ "--initial-rotate": "-45deg" } as React.CSSProperties}
+      >
+        <path d="M20,80 L80,20 M70,10 L90,30 M20,80 L35,80 L20,65 Z M30,70 L25,75" />
+      </svg>
+
+      {/* Floating Sparkle Symbols */}
+      <span
+        className="material-symbols-outlined absolute top-1/4 left-1/4 text-white/15 text-5xl pointer-events-none animate-gentle-float"
+        style={{ "--initial-rotate": "10deg" } as React.CSSProperties}
+      >
         auto_awesome
       </span>
+      <span
+        className="material-symbols-outlined absolute bottom-1/4 right-1/4 text-white/15 text-6xl pointer-events-none animate-gentle-drift"
+        style={{ "--initial-rotate": "-15deg" } as React.CSSProperties}
+      >
+        draw
+      </span>
+      <span
+        className="material-symbols-outlined absolute top-8 left-1/3 text-white/15 text-4xl pointer-events-none animate-gentle-float hidden md:inline-block"
+        style={{ "--initial-rotate": "5deg" } as React.CSSProperties}
+      >
+        palette
+      </span>
+      <span
+        className="material-symbols-outlined absolute bottom-12 left-1/3 text-white/15 text-5xl pointer-events-none animate-gentle-drift hidden md:inline-block"
+        style={{ "--initial-rotate": "-20deg" } as React.CSSProperties}
+      >
+        push_pin
+      </span>
+
 
       <div className="text-center mb-10 z-20">
         <h1 className="font-headline text-4xl md:text-6xl text-paper-yellow mb-4 drop-shadow-[4px_4px_0px_rgba(45,52,54,1)] transform -rotate-1">
-          Our Creative Journey
+          Our Journey
         </h1>
         <p className="font-body text-base md:text-lg text-white bg-ink-black/20 px-4 py-2 inline-block -rotate-1 border border-white/20 rounded-sm">
           Flipping through the pages of inspiration.
@@ -80,7 +133,7 @@ export default function HeroCarousel() {
         <button
           onClick={handlePrev}
           aria-label="Previous slide"
-          className="absolute left-[-20px] md:left-[-40px] z-30 bg-paper-yellow border-2 border-ink-black shadow-[3px_3px_0px_0px_rgba(45,52,54,1)] p-3 rounded-full hover:bg-pastel-green hover:-translate-x-1 hover:translate-y-0.5 hover:shadow-none transition-all cursor-pointer"
+          className="hidden sm:flex absolute left-[-20px] md:left-[-40px] z-30 bg-paper-yellow border-2 border-ink-black shadow-[3px_3px_0px_0px_rgba(45,52,54,1)] p-3 rounded-full hover:bg-pastel-green hover:-translate-x-1 hover:translate-y-0.5 hover:shadow-none transition-all cursor-pointer"
         >
           <span className="material-symbols-outlined text-ink-black font-bold block">west</span>
         </button>
@@ -146,14 +199,14 @@ export default function HeroCarousel() {
         <button
           onClick={handleNext}
           aria-label="Next slide"
-          className="absolute right-[-20px] md:right-[-40px] z-30 bg-paper-yellow border-2 border-ink-black shadow-[3px_3px_0px_0px_rgba(45,52,54,1)] p-3 rounded-full hover:bg-pastel-green hover:translate-x-1 hover:translate-y-0.5 hover:shadow-none transition-all cursor-pointer"
+          className="hidden sm:flex absolute right-[-20px] md:right-[-40px] z-30 bg-paper-yellow border-2 border-ink-black shadow-[3px_3px_0px_0px_rgba(45,52,54,1)] p-3 rounded-full hover:bg-pastel-green hover:translate-x-1 hover:translate-y-0.5 hover:shadow-none transition-all cursor-pointer"
         >
           <span className="material-symbols-outlined text-ink-black font-bold block">east</span>
         </button>
       </div>
 
-      {/* Page indicator dot markers */}
-      <div className="flex gap-2 mt-8 z-20">
+      {/* Page indicator dot markers (Desktop) */}
+      <div className="hidden sm:flex gap-2 mt-8 z-20">
         {CAROUSEL_SLIDES.map((_, index) => (
           <button
             key={index}
@@ -163,6 +216,35 @@ export default function HeroCarousel() {
             }`}
           ></button>
         ))}
+      </div>
+
+      {/* Mobile Controls: Prev, Dots, Next */}
+      <div className="flex sm:hidden items-center gap-6 mt-8 z-20">
+        <button
+          onClick={handlePrev}
+          aria-label="Previous slide"
+          className="bg-paper-yellow border-2 border-ink-black shadow-[2px_2px_0px_0px_rgba(45,52,54,1)] p-2.5 rounded-full cursor-pointer hover:bg-pastel-green active:scale-95 transition-all text-ink-black"
+        >
+          <span className="material-symbols-outlined text-ink-black font-bold text-sm block">west</span>
+        </button>
+        <div className="flex gap-2">
+          {CAROUSEL_SLIDES.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentIndex(index)}
+              className={`w-3 h-3 rounded-full border border-ink-black transition-all cursor-pointer ${
+                index === currentIndex ? "bg-coral-orange scale-110" : "bg-paper-yellow"
+              }`}
+            ></button>
+          ))}
+        </div>
+        <button
+          onClick={handleNext}
+          aria-label="Next slide"
+          className="bg-paper-yellow border-2 border-ink-black shadow-[2px_2px_0px_0px_rgba(45,52,54,1)] p-2.5 rounded-full cursor-pointer hover:bg-pastel-green active:scale-95 transition-all text-ink-black"
+        >
+          <span className="material-symbols-outlined text-ink-black font-bold text-sm block">east</span>
+        </button>
       </div>
 
       {/* Tear Paper Bottom Divider */}
