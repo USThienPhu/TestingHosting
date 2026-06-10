@@ -86,7 +86,47 @@ const INITIAL_ENTRIES: GalleryEntry[] = [
     likes: 35,
     hasLiked: false,
   },
+  {
+    id: 7,
+    imageUrl: "/scrapbook_flowers.png",
+    title: "Pressed Garden Flowers",
+    category: "Crafts",
+    description: "Delicate dried pressed flowers arranged beautifully on a warm tea-stained vintage notebook page, with hand-written thoughts and cute tiny tape decorations.",
+    date: "May 8, 2026",
+    tapeColor: "tape-coral",
+    tapeRotation: "rotate-6",
+    cardRotation: "rotate-2",
+    likes: 15,
+    hasLiked: false,
+  },
+  {
+    id: 8,
+    imageUrl: "/watercolor_palette.png",
+    title: "Vibrant Watercolor Wash",
+    category: "Painting",
+    description: "A cozy studio desk setup showing a messy watercolor paint palette, wet brushes, and organic color gradients bleeding into thick textured artist paper.",
+    date: "May 5, 2026",
+    tapeColor: "tape-green",
+    tapeRotation: "-rotate-12",
+    cardRotation: "-rotate-2",
+    likes: 27,
+    hasLiked: false,
+  },
+  {
+    id: 9,
+    imageUrl: "/travel_polaroids.png",
+    title: "Seaside Travel Memories",
+    category: "Photos",
+    description: "Physical Polaroid snaps from past adventures layout on a rustic blue wooden background, featuring beautiful sunny shorelines and coconut palm tree shadows.",
+    date: "May 1, 2026",
+    tapeColor: "tape-yellow",
+    tapeRotation: "rotate-[15deg]",
+    cardRotation: "rotate-1",
+    likes: 39,
+    hasLiked: false,
+  },
 ];
+
 
 export default function Home() {
   const [entries, setEntries] = useState<GalleryEntry[]>(INITIAL_ENTRIES);
@@ -202,7 +242,7 @@ export default function Home() {
         }}
       >
         <div className="font-headline text-lg text-ink-black font-bold mb-2">
-          DoodleDiary Gallery
+          Nheo Phú Collection
         </div>
         <div className="flex flex-wrap justify-center gap-6 text-xs font-bold">
           <a className="hover:text-bright-blue transition-colors" href="#">Privacy Paper</a>
@@ -210,7 +250,7 @@ export default function Home() {
           <a className="hover:text-bright-blue transition-colors" href="#">Contact Ink</a>
         </div>
         <p className="text-[11px] text-ink-black/40 mt-4 font-bold">
-          © {new Date().getFullYear()} Crafted with Love & Washi Tape • DoodleDiary
+          © {new Date().getFullYear()} Crafted with Love & Washi Tape • Nheo Phú Collection
         </p>
       </footer>
 

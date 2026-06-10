@@ -15,7 +15,7 @@ const courier = Courier_Prime({
 });
 
 export const metadata: Metadata = {
-  title: "DoodleDiary - Personal Handmade Scrapbook & Gallery",
+  title: "Nheo Phú Collection - Personal Handmade Scrapbook & Gallery",
   description: "A playful, retro scrapbook and creative gallery built with love, washi tape, and doodles.",
 };
 

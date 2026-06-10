@@ -30,14 +30,14 @@ export default function Lightbox({
       onClick={onClose}
       className="fixed inset-0 z-50 bg-ink-black/60 backdrop-blur-sm flex items-center justify-center p-4 md:p-10 select-none transition-all duration-300"
     >
-      {/* Navigation Arrows */}
+      {/* Navigation Arrows (Desktop/Tablet) */}
       <button
         onClick={(e) => {
           e.stopPropagation();
           onPrev();
         }}
         aria-label="Previous image"
-        className="absolute left-4 md:left-10 z-50 bg-paper-yellow border-2 border-ink-black shadow-[3px_3px_0px_0px_rgba(45,52,54,1)] p-3 rounded-full hover:bg-pastel-green hover:-translate-x-1 hover:shadow-none transition-all cursor-pointer text-ink-black"
+        className="hidden md:flex absolute left-4 md:left-10 z-50 bg-paper-yellow border-2 border-ink-black shadow-[3px_3px_0px_0px_rgba(45,52,54,1)] p-3 rounded-full hover:bg-pastel-green hover:-translate-x-1 hover:shadow-none transition-all cursor-pointer text-ink-black"
       >
         <span className="material-symbols-outlined text-2xl font-bold block">west</span>
       </button>
@@ -48,10 +48,11 @@ export default function Lightbox({
           onNext();
         }}
         aria-label="Next image"
-        className="absolute right-4 md:right-10 z-50 bg-paper-yellow border-2 border-ink-black shadow-[3px_3px_0px_0px_rgba(45,52,54,1)] p-3 rounded-full hover:bg-pastel-green hover:translate-x-1 hover:shadow-none transition-all cursor-pointer text-ink-black"
+        className="hidden md:flex absolute right-4 md:right-10 z-50 bg-paper-yellow border-2 border-ink-black shadow-[3px_3px_0px_0px_rgba(45,52,54,1)] p-3 rounded-full hover:bg-pastel-green hover:translate-x-1 hover:shadow-none transition-all cursor-pointer text-ink-black"
       >
         <span className="material-symbols-outlined text-2xl font-bold block">east</span>
       </button>
+
 
       {/* Main Sketchbook Page Modal */}
       <div
@@ -83,15 +84,16 @@ export default function Lightbox({
           <div className={`washi-tape ${entry.tapeColor} w-28 -top-3 left-4 -rotate-12`}></div>
 
           {/* Polaroid wrap */}
-          <div className="bg-white p-4 pb-12 border-2 border-ink-black shadow-[4px_4px_0px_0px_rgba(45,52,54,1)] w-full max-h-[60vh] flex flex-col items-center justify-center">
+          <div className="bg-white p-3 pb-10 md:p-4 md:pb-12 border-2 border-ink-black shadow-[4px_4px_0px_0px_rgba(45,52,54,1)] w-full max-h-[40vh] md:max-h-[60vh] flex flex-col items-center justify-center">
             <div className="border border-ink-black/10 overflow-hidden w-full h-full flex items-center justify-center bg-neutral-100">
               <img
                 src={entry.imageUrl}
                 alt={entry.title}
-                className="max-h-[45vh] w-full object-contain"
+                className="max-h-[30vh] md:max-h-[45vh] w-full object-contain"
               />
             </div>
           </div>
+
         </div>
 
         {/* Content Details Panel */}
@@ -147,9 +149,32 @@ export default function Lightbox({
                 <span>{entry.likes} Likes</span>
               </button>
 
+              {/* Inline Navigation for Mobile */}
+              <div className="flex md:hidden items-center gap-2.5">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onPrev();
+                  }}
+                  className="bg-paper-yellow border-2 border-ink-black p-1.5 rounded-full hover:bg-pastel-green active:scale-95 transition-all text-ink-black cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-sm font-bold block">west</span>
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onNext();
+                  }}
+                  className="bg-paper-yellow border-2 border-ink-black p-1.5 rounded-full hover:bg-pastel-green active:scale-95 transition-all text-ink-black cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-sm font-bold block">east</span>
+                </button>
+              </div>
+
               <span className="text-xs font-body text-ink-black/40 font-bold">
                 ID: #{entry.id}
               </span>
+
             </div>
           </div>
         </div>

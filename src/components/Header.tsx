@@ -13,14 +13,14 @@ export default function Header({}: HeaderProps) {
       }}
     >
       {/* Brand Logo */}
-      <div className="font-headline text-2xl md:text-3xl text-coral-orange italic flex items-center gap-2 select-none">
+      <div className="font-headline text-xl md:text-3xl text-coral-orange italic flex items-center gap-1.5 md:gap-2 select-none">
         <span 
-          className="material-symbols-outlined" 
+          className="material-symbols-outlined text-xl md:text-2xl" 
           style={{ fontVariationSettings: '"FILL" 1' }}
         >
           edit
         </span>
-        DoodleDiary
+        Nheo Phú Collection
       </div>
 
       {/* Navigation Links */}
@@ -54,7 +54,7 @@ export default function Header({}: HeaderProps) {
       {/* Trailing Actions */}
       <div className="flex items-center gap-4">
         <button 
-          className="bg-coral-orange text-ink-black border-2 border-ink-black shadow-[4px_4px_0px_0px_rgba(45,52,54,1)] px-5 py-2 font-headline text-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all rounded-sm cursor-pointer"
+          className="bg-coral-orange text-ink-black border-2 border-ink-black shadow-[3px_3px_0px_0px_rgba(45,52,54,1)] sm:shadow-[4px_4px_0px_0px_rgba(45,52,54,1)] px-3 py-1.5 sm:px-5 sm:py-2 font-headline text-xs sm:text-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all rounded-sm cursor-pointer"
         >
           Join Club
         </button>
