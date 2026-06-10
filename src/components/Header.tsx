@@ -2,9 +2,11 @@
 
 import React from "react";
 
-interface HeaderProps {}
+interface HeaderProps {
+  onAddClick?: () => void;
+}
 
-export default function Header({}: HeaderProps) {
+export default function Header({ onAddClick }: HeaderProps) {
   return (
     <header 
       className="bg-surface-bg text-bright-blue w-full border-b-2 border-dashed border-ink-black shadow-[4px_4px_0px_0px_rgba(45,52,54,1)] flex justify-between items-center px-4 md:px-20 py-4 relative z-50 transition-all"
@@ -54,9 +56,10 @@ export default function Header({}: HeaderProps) {
       {/* Trailing Actions */}
       <div className="flex items-center gap-4">
         <button 
+          onClick={onAddClick}
           className="bg-coral-orange text-ink-black border-2 border-ink-black shadow-[3px_3px_0px_0px_rgba(45,52,54,1)] sm:shadow-[4px_4px_0px_0px_rgba(45,52,54,1)] px-3 py-1.5 sm:px-5 sm:py-2 font-headline text-xs sm:text-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all rounded-sm cursor-pointer"
         >
-          Join Club
+          Add to collection
         </button>
       </div>
     </header>

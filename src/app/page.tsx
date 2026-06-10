@@ -5,6 +5,7 @@ import Header from "../components/Header";
 import HeroCarousel from "../components/HeroCarousel";
 import GalleryGrid, { GalleryEntry } from "../components/GalleryGrid";
 import Lightbox from "../components/Lightbox";
+import UploadModal from "../components/UploadModal";
 
 // Initial mock entries featuring the user's images and decorative scrapbook photos
 const INITIAL_ENTRIES: GalleryEntry[] = [
@@ -177,6 +178,35 @@ export default function Home() {
   const [entries, setEntries] = useState<GalleryEntry[]>(INITIAL_ENTRIES);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedEntry, setSelectedEntry] = useState<GalleryEntry | null>(null);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+
+  const handleUploadSuccess = (albumId: number, imageUrl: string) => {
+    setEntries((prev) => {
+      const updated = prev.map((entry) => {
+        if (entry.id === albumId) {
+          return {
+            ...entry,
+            images: [...entry.images, imageUrl],
+          };
+        }
+        return entry;
+      });
+
+      // Update selected entry state if it is currently open in Lightbox
+      setSelectedEntry((prevSelected) => {
+        if (prevSelected && prevSelected.id === albumId) {
+          return {
+            ...prevSelected,
+            images: [...prevSelected.images, imageUrl],
+          };
+        }
+        return prevSelected;
+      });
+
+      return updated;
+    });
+  };
+
 
   // Manage Liking entries
   const handleLikeToggle = (id: number, e?: React.MouseEvent) => {
@@ -227,7 +257,8 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-paper-yellow text-ink-black font-body">
       {/* Top Navigation Header bar */}
-      <Header />
+      <Header onAddClick={() => setIsUploadModalOpen(true)} />
+
 
       {/* Hero Interactive Slide presentation */}
       <HeroCarousel />
@@ -309,6 +340,15 @@ export default function Home() {
           onLikeToggle={(id) => handleLikeToggle(id)}
         />
       )}
+
+      {/* Upload Modal */}
+      <UploadModal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+        albums={entries}
+        onUploadSuccess={handleUploadSuccess}
+      />
     </div>
+
   );
 }
