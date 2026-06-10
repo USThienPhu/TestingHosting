@@ -18,7 +18,15 @@ export async function POST(request: Request): Promise<NextResponse> {
       });
       return NextResponse.json(blob);
     } else {
-      // Fallback: Save locally in public/uploads/
+      // Check if we are running on Vercel (read-only filesystem)
+      if (process.env.VERCEL === '1') {
+        return NextResponse.json(
+          { error: "Vercel Blob is not configured. Please add BLOB_READ_WRITE_TOKEN to your Vercel Environment Variables." },
+          { status: 500 }
+        );
+      }
+
+      // Fallback: Save locally in public/uploads/ (only for local development)
       const uploadDir = path.join(process.cwd(), 'public', 'uploads');
       if (!fs.existsSync(uploadDir)) {
         fs.mkdirSync(uploadDir, { recursive: true });
