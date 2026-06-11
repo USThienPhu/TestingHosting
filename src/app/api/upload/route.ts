@@ -15,6 +15,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     if (process.env.BLOB_READ_WRITE_TOKEN) {
       const blob = await put(filename, buffer, {
         access: 'public',
+        addRandomSuffix: true,
       });
       return NextResponse.json(blob);
     } else {
