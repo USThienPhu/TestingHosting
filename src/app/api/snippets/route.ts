@@ -2,6 +2,8 @@ import { sql } from '@vercel/postgres';
 import { NextResponse } from 'next/server';
 import { initDB } from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+
 const INITIAL_ENTRIES = [
   {
     title: "Morning sketches - Day 42",
