@@ -180,6 +180,7 @@ export default function Home() {
   const [selectedEntry, setSelectedEntry] = useState<GalleryEntry | null>(null);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // Fetch entries from Postgres database
   React.useEffect(() => {
@@ -189,9 +190,13 @@ export default function Home() {
         if (response.ok) {
           const data = await response.json();
           setEntries(data);
+        } else {
+          const errorData = await response.json();
+          setErrorMsg(errorData.error || "Failed to load snippets.");
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error("Failed to fetch snippets:", error);
+        setErrorMsg(error.message);
       } finally {
         setIsLoading(false);
       }
@@ -356,6 +361,12 @@ export default function Home() {
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
             <h3 className="font-headline text-2xl text-ink-black">Loading snippets...</h3>
+          </div>
+        ) : errorMsg ? (
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <span className="material-symbols-outlined text-5xl text-red-500 mb-4">error</span>
+            <h3 className="font-headline text-2xl text-red-500">Error Loading Snippets</h3>
+            <p className="font-body text-sm text-red-500/80 mt-2 max-w-md">{errorMsg}</p>
           </div>
         ) : (
           <GalleryGrid
