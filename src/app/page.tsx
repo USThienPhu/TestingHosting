@@ -198,10 +198,6 @@ export default function Home() {
     }
     fetchSnippets();
   }, []);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedEntry, setSelectedEntry] = useState<GalleryEntry | null>(null);
-  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
-
   const handleUploadSuccess = async (albumId: number, imageUrl: string) => {
     // Optimistically update UI
     const targetEntry = entries.find((e) => e.id === albumId);
