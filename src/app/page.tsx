@@ -175,18 +175,47 @@ const INITIAL_ENTRIES: GalleryEntry[] = [
 
 
 export default function Home() {
-  const [entries, setEntries] = useState<GalleryEntry[]>(INITIAL_ENTRIES);
+  const [entries, setEntries] = useState<GalleryEntry[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedEntry, setSelectedEntry] = useState<GalleryEntry | null>(null);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch entries from Postgres database
+  React.useEffect(() => {
+    async function fetchSnippets() {
+      try {
+        const response = await fetch('/api/snippets');
+        if (response.ok) {
+          const data = await response.json();
+          setEntries(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch snippets:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchSnippets();
+  }, []);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedEntry, setSelectedEntry] = useState<GalleryEntry | null>(null);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
-  const handleUploadSuccess = (albumId: number, imageUrl: string) => {
+  const handleUploadSuccess = async (albumId: number, imageUrl: string) => {
+    // Optimistically update UI
+    const targetEntry = entries.find((e) => e.id === albumId);
+    if (!targetEntry) return;
+
+    const newImages = [...targetEntry.images, imageUrl];
+
     setEntries((prev) => {
       const updated = prev.map((entry) => {
         if (entry.id === albumId) {
           return {
             ...entry,
-            images: [...entry.images, imageUrl],
+            images: newImages,
+            imageUrl: newImages[0] || entry.imageUrl,
           };
         }
         return entry;
@@ -197,7 +226,8 @@ export default function Home() {
         if (prevSelected && prevSelected.id === albumId) {
           return {
             ...prevSelected,
-            images: [...prevSelected.images, imageUrl],
+            images: newImages,
+            imageUrl: newImages[0] || prevSelected.imageUrl,
           };
         }
         return prevSelected;
@@ -205,16 +235,32 @@ export default function Home() {
 
       return updated;
     });
+
+    // Save to Database
+    try {
+      await fetch(`/api/snippets/${albumId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ images: newImages }),
+      });
+    } catch (error) {
+      console.error("Failed to update snippet images in DB:", error);
+    }
   };
 
 
   // Manage Liking entries
-  const handleLikeToggle = (id: number, e?: React.MouseEvent) => {
+  const handleLikeToggle = async (id: number, e?: React.MouseEvent) => {
     e?.stopPropagation(); // Prevent card clicks
+    
+    const targetEntry = entries.find((e) => e.id === id);
+    if (!targetEntry) return;
+    const hasLikedNow = !targetEntry.hasLiked;
+
+    // Optimistically update UI
     setEntries((prev) =>
       prev.map((entry) => {
         if (entry.id === id) {
-          const hasLikedNow = !entry.hasLiked;
           return {
             ...entry,
             likes: hasLikedNow ? entry.likes + 1 : entry.likes - 1,
@@ -228,7 +274,6 @@ export default function Home() {
     // Keep selected item state aligned
     setSelectedEntry((prev) => {
       if (prev && prev.id === id) {
-        const hasLikedNow = !prev.hasLiked;
         return {
           ...prev,
           likes: hasLikedNow ? prev.likes + 1 : prev.likes - 1,
@@ -237,6 +282,17 @@ export default function Home() {
       }
       return prev;
     });
+
+    // Save to Database
+    try {
+      await fetch(`/api/snippets/${id}/like`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ hasLiked: hasLikedNow }),
+      });
+    } catch (error) {
+      console.error("Failed to update like status in DB:", error);
+    }
   };
 
   // Modal navigation controls in Lightbox
@@ -297,12 +353,22 @@ export default function Home() {
 
       {/* Masonry gallery Grid display area */}
       <main className="flex-grow">
-        <GalleryGrid
-          entries={entries}
-          onCardClick={(entry) => setSelectedEntry(entry)}
-          onLikeToggle={(id, e) => handleLikeToggle(id, e)}
-          searchQuery={searchQuery}
-        />
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <svg className="animate-spin h-10 w-10 text-coral-orange mb-4" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <h3 className="font-headline text-2xl text-ink-black">Loading snippets...</h3>
+          </div>
+        ) : (
+          <GalleryGrid
+            entries={entries}
+            onCardClick={(entry) => setSelectedEntry(entry)}
+            onLikeToggle={(id, e) => handleLikeToggle(id, e)}
+            searchQuery={searchQuery}
+          />
+        )}
       </main>
 
       {/* Torn Edge Separator above Footer */}
@@ -338,7 +404,8 @@ export default function Home() {
           onPrev={handlePrevEntry}
           onNext={handleNextEntry}
           onLikeToggle={(id) => handleLikeToggle(id)}
-          onEditEntryImages={(albumId, newImages) => {
+          onEditEntryImages={async (albumId, newImages) => {
+            // Optimistically update UI
             setEntries((prev) =>
               prev.map((entry) => {
                 if (entry.id === albumId) {
@@ -362,6 +429,17 @@ export default function Home() {
               }
               return prev;
             });
+
+            // Save to Database
+            try {
+              await fetch(`/api/snippets/${albumId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ images: newImages }),
+              });
+            } catch (error) {
+              console.error("Failed to update snippet images in DB:", error);
+            }
           }}
         />
       )}
