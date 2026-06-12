@@ -179,7 +179,25 @@ export async function GET() {
     }
 
     const { rows } = await sql`SELECT * FROM snippets ORDER BY id ASC`;
-    return NextResponse.json(rows);
+    
+    // Postgres returns lowercase column names for unquoted columns.
+    // We map them back to camelCase to match the frontend GalleryEntry interface.
+    const formattedRows = rows.map(row => ({
+      id: row.id,
+      title: row.title,
+      category: row.category,
+      description: row.description,
+      date: row.date,
+      tapeColor: row.tapecolor,
+      tapeRotation: row.taperotation,
+      cardRotation: row.cardrotation,
+      likes: row.likes,
+      hasLiked: row.hasliked,
+      imageUrl: row.imageurl,
+      images: row.images
+    }));
+
+    return NextResponse.json(formattedRows);
   } catch (error: any) {
     console.error('Error fetching snippets:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
