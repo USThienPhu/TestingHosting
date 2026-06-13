@@ -9,7 +9,7 @@ interface LightboxProps {
   onPrev: () => void;
   onNext: () => void;
   onLikeToggle: (id: number) => void;
-  onEditEntryImages: (albumId: number, newImages: string[]) => void;
+  onEditEntry: (albumId: number, newImages: string[], title: string, description: string) => void;
   onDeleteEntry?: (albumId: number) => void;
 }
 
@@ -19,12 +19,14 @@ export default function Lightbox({
   onPrev,
   onNext,
   onLikeToggle,
-  onEditEntryImages,
+  onEditEntry,
   onDeleteEntry,
 }: LightboxProps) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const [tempImages, setTempImages] = useState<string[]>([]);
+  const [tempTitle, setTempTitle] = useState("");
+  const [tempDescription, setTempDescription] = useState("");
   const [editUploading, setEditUploading] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
   const editFileInputRef = useRef<HTMLInputElement>(null);
@@ -36,6 +38,8 @@ export default function Lightbox({
     setEditError(null);
     if (entry) {
       setTempImages(entry.images || []);
+      setTempTitle(entry.title || "");
+      setTempDescription(entry.description || "");
     }
   }, [entry]);
 
@@ -53,18 +57,26 @@ export default function Lightbox({
 
   const startEditing = () => {
     setTempImages(entry.images || []);
+    setTempTitle(entry.title || "");
+    setTempDescription(entry.description || "");
     setIsEditing(true);
     setEditError(null);
   };
 
   const cancelEditing = () => {
     setTempImages(entry.images || []);
+    setTempTitle(entry.title || "");
+    setTempDescription(entry.description || "");
     setIsEditing(false);
     setEditError(null);
   };
 
   const saveEditing = () => {
-    onEditEntryImages(entry.id, tempImages);
+    if (!tempTitle.trim()) {
+      setEditError("Title cannot be empty.");
+      return;
+    }
+    onEditEntry(entry.id, tempImages, tempTitle, tempDescription);
     setIsEditing(false);
     setEditError(null);
   };
@@ -307,10 +319,31 @@ export default function Lightbox({
                 </div>
               </div>
 
-              <h3 className="font-headline text-xl text-ink-black mb-3">Edit Album Photos</h3>
+              <h3 className="font-headline text-xl text-ink-black mb-3">Edit Album Details</h3>
+              
+              <div className="flex flex-col gap-2 mb-3 pr-1">
+                <input
+                  type="text"
+                  value={tempTitle}
+                  onChange={(e) => setTempTitle(e.target.value)}
+                  placeholder="Snippet Title"
+                  className="bg-white border-2 border-ink-black shadow-[2px_2px_0px_0px_rgba(45,52,54,1)] p-2 font-headline text-sm w-full focus:outline-none focus:ring-2 focus:ring-coral-orange/50 transition-all"
+                  disabled={editUploading}
+                />
+                <textarea
+                  value={tempDescription}
+                  onChange={(e) => setTempDescription(e.target.value)}
+                  placeholder="Snippet description..."
+                  rows={2}
+                  className="bg-white border-2 border-ink-black shadow-[2px_2px_0px_0px_rgba(45,52,54,1)] p-2 font-body text-xs w-full resize-none focus:outline-none focus:ring-2 focus:ring-coral-orange/50 transition-all scrollbar-thin"
+                  disabled={editUploading}
+                />
+              </div>
+
+              <h4 className="font-headline text-sm text-ink-black mb-2">Photos</h4>
               
               {/* Album List of images */}
-              <div className="flex flex-col gap-3 max-h-[42vh] overflow-y-auto pr-1">
+              <div className="flex flex-col gap-3 max-h-[28vh] overflow-y-auto pr-1 scrollbar-thin">
                 {tempImages.map((imgUrl, idx) => (
                   <div key={idx} className="flex items-center gap-3 bg-white p-2 border border-ink-black shadow-[2px_2px_0px_0px_rgba(45,52,54,1)] select-none">
                     <img src={imgUrl} className="w-12 h-12 object-cover border border-ink-black/20" alt="" />

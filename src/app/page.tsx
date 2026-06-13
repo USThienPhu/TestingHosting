@@ -411,7 +411,7 @@ export default function Home() {
           onPrev={handlePrevEntry}
           onNext={handleNextEntry}
           onLikeToggle={(id) => handleLikeToggle(id)}
-          onEditEntryImages={async (albumId, newImages) => {
+          onEditEntry={async (albumId, newImages, title, description) => {
             // Optimistically update UI
             setEntries((prev) =>
               prev.map((entry) => {
@@ -420,6 +420,8 @@ export default function Home() {
                     ...entry,
                     images: newImages,
                     imageUrl: newImages[0] || entry.imageUrl,
+                    title,
+                    description,
                   };
                 }
                 return entry;
@@ -432,6 +434,8 @@ export default function Home() {
                   ...prev,
                   images: newImages,
                   imageUrl: newImages[0] || prev.imageUrl,
+                  title,
+                  description,
                 };
               }
               return prev;
@@ -442,10 +446,10 @@ export default function Home() {
               await fetch(`/api/snippets/${albumId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ images: newImages }),
+                body: JSON.stringify({ images: newImages, title, description }),
               });
             } catch (error) {
-              console.error("Failed to update snippet images in DB:", error);
+              console.error("Failed to update snippet in DB:", error);
             }
           }}
           onDeleteEntry={async (albumId) => {

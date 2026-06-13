@@ -4,20 +4,38 @@ import { NextResponse } from 'next/server';
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const body = await request.json();
-    const { images } = body;
+    const rawText = await request.text();
+    console.log(`[PUT /api/snippets/${id}] Raw body: '${rawText}'`);
+    if (!rawText) {
+      return NextResponse.json({ error: 'Empty request body' }, { status: 400 });
+    }
+    const body = JSON.parse(rawText);
+    const { images, title, description } = body;
 
     if (!images || !Array.isArray(images)) {
       return NextResponse.json({ error: 'Images array is required' }, { status: 400 });
     }
 
-    const result = await sql`
-      UPDATE snippets
-      SET images = ${JSON.stringify(images)}::jsonb,
-          imageUrl = ${images[0]}
-      WHERE id = ${id}
-      RETURNING *
-    `;
+    let result;
+    if (title !== undefined && description !== undefined) {
+      result = await sql`
+        UPDATE snippets
+        SET images = ${JSON.stringify(images)}::jsonb,
+            imageUrl = ${images[0]},
+            title = ${title},
+            description = ${description}
+        WHERE id = ${id}
+        RETURNING *
+      `;
+    } else {
+      result = await sql`
+        UPDATE snippets
+        SET images = ${JSON.stringify(images)}::jsonb,
+            imageUrl = ${images[0]}
+        WHERE id = ${id}
+        RETURNING *
+      `;
+    }
 
     if (result.rowCount === 0) {
       return NextResponse.json({ error: 'Snippet not found' }, { status: 404 });
