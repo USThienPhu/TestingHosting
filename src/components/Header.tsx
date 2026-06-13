@@ -59,7 +59,7 @@ export default function Header({ onAddClick }: HeaderProps) {
           onClick={onAddClick}
           className="bg-coral-orange text-ink-black border-2 border-ink-black shadow-[3px_3px_0px_0px_rgba(45,52,54,1)] sm:shadow-[4px_4px_0px_0px_rgba(45,52,54,1)] px-3 py-1.5 sm:px-5 sm:py-2 font-headline text-xs sm:text-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all rounded-sm cursor-pointer"
         >
-          Add to collection
+          add snippet
         </button>
       </div>
     </header>

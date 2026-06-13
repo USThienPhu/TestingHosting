@@ -448,6 +448,20 @@ export default function Home() {
               console.error("Failed to update snippet images in DB:", error);
             }
           }}
+          onDeleteEntry={async (albumId) => {
+            // Optimistically update UI
+            setEntries((prev) => prev.filter((entry) => entry.id !== albumId));
+            setSelectedEntry(null);
+
+            // Save to Database
+            try {
+              await fetch(`/api/snippets/${albumId}`, {
+                method: 'DELETE',
+              });
+            } catch (error) {
+              console.error("Failed to delete snippet in DB:", error);
+            }
+          }}
         />
       )}
 
@@ -458,6 +472,9 @@ export default function Home() {
         onClose={() => setIsUploadModalOpen(false)}
         albums={entries}
         onUploadSuccess={handleUploadSuccess}
+        onCreateSnippetSuccess={(newSnippet) => {
+          setEntries((prev) => [...prev, newSnippet]);
+        }}
       />
     </div>
 
