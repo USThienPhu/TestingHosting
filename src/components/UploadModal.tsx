@@ -8,6 +8,7 @@ interface UploadModalProps {
   onClose: () => void;
   albums: GalleryEntry[];
   onUploadSuccess: (albumId: number, imageUrl: string) => void;
+  onCreateSnippetSuccess?: (newSnippet: GalleryEntry) => void;
 }
 
 export default function UploadModal({
@@ -15,10 +16,15 @@ export default function UploadModal({
   onClose,
   albums,
   onUploadSuccess,
+  onCreateSnippetSuccess,
 }: UploadModalProps) {
-  const [selectedAlbumId, setSelectedAlbumId] = useState<number>(
-    albums.length > 0 ? albums[0].id : 0
+  const [selectedAlbumId, setSelectedAlbumId] = useState<number | 'new'>(
+    albums.length > 0 ? albums[0].id : 'new'
   );
+  const [newTitle, setNewTitle] = useState("");
+  const [newCategory, setNewCategory] = useState("Sketches");
+  const [newDescription, setNewDescription] = useState("");
+  
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -102,12 +108,40 @@ export default function UploadModal({
         throw new Error("No URL returned from upload response.");
       }
 
-      // Success callback
-      onUploadSuccess(selectedAlbumId, result.url);
+      if (selectedAlbumId === 'new') {
+        const snippetRes = await fetch('/api/snippets', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: newTitle || 'Untitled Snippet',
+            category: newCategory,
+            description: newDescription,
+            tapeColor: 'tape-coral', // Default
+            tapeRotation: 'rotate-2',
+            cardRotation: '-rotate-1',
+            imageUrl: result.url,
+            images: [result.url]
+          })
+        });
+        
+        if (!snippetRes.ok) {
+          throw new Error("Failed to create snippet in DB.");
+        }
+        
+        const newSnippet = await snippetRes.json();
+        if (onCreateSnippetSuccess) {
+          onCreateSnippetSuccess(newSnippet);
+        }
+      } else {
+        // Success callback
+        onUploadSuccess(Number(selectedAlbumId), result.url);
+      }
 
       // Reset states and close
       setSelectedFile(null);
       setPreviewUrl(null);
+      setNewTitle("");
+      setNewDescription("");
       onClose();
     } catch (err: any) {
       console.error(err);
@@ -120,7 +154,7 @@ export default function UploadModal({
   return (
     <div className="fixed inset-0 z-50 bg-ink-black/60 backdrop-blur-sm flex items-center justify-center p-4 select-none">
       <div 
-        className="relative bg-paper-yellow w-full max-w-lg border-2 border-ink-black shadow-[8px_8px_0px_0px_rgba(45,52,54,1)] p-6 md:p-8 rounded-sm flex flex-col gap-6"
+        className="relative bg-paper-yellow w-full max-w-lg border-2 border-ink-black shadow-[8px_8px_0px_0px_rgba(45,52,54,1)] p-6 md:p-8 rounded-sm flex flex-col gap-6 max-h-[90vh] overflow-y-auto"
         style={{
           backgroundImage: 'url("https://www.transparenttextures.com/patterns/notebook-dark.png")'
         }}
@@ -142,10 +176,10 @@ export default function UploadModal({
         {/* Header Title */}
         <div className="text-center transform -rotate-1">
           <h2 className="font-headline text-2xl md:text-3xl text-ink-black drop-shadow-[2px_2px_0px_rgba(45,52,54,0.1)]">
-            Add to Collection
+            Add Snippet
           </h2>
           <p className="font-body text-xs text-ink-black/60 mt-1">
-            Pin new photo memories directly into your scrapbook albums.
+            Create a new snippet or pin photos to existing ones.
           </p>
         </div>
 
@@ -159,10 +193,11 @@ export default function UploadModal({
             <select
               id="album-select"
               value={selectedAlbumId}
-              onChange={(e) => setSelectedAlbumId(Number(e.target.value))}
+              onChange={(e) => setSelectedAlbumId(e.target.value === 'new' ? 'new' : Number(e.target.value))}
               disabled={uploading}
               className="bg-white border-2 border-ink-black shadow-[3px_3px_0px_0px_rgba(45,52,54,1)] p-3 font-body text-sm text-ink-black focus:outline-none focus:bg-paper-yellow transition-all rounded-sm cursor-pointer disabled:opacity-50"
             >
+              <option value="new">-- Create New Snippet --</option>
               {albums.map((album) => (
                 <option key={album.id} value={album.id}>
                   {album.title} ({album.category})
@@ -170,6 +205,44 @@ export default function UploadModal({
               ))}
             </select>
           </div>
+
+          {selectedAlbumId === 'new' && (
+            <div className="flex flex-col gap-3 p-4 bg-white/50 border border-ink-black/20 rounded-sm">
+              <div className="flex flex-col gap-1.5">
+                <label className="font-body text-sm font-bold text-ink-black/80">Title</label>
+                <input
+                  type="text"
+                  value={newTitle}
+                  onChange={(e) => setNewTitle(e.target.value)}
+                  className="bg-white border-2 border-ink-black p-2 font-body text-sm"
+                  placeholder="Snippet Title"
+                  required
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="font-body text-sm font-bold text-ink-black/80">Category</label>
+                <select
+                  value={newCategory}
+                  onChange={(e) => setNewCategory(e.target.value)}
+                  className="bg-white border-2 border-ink-black p-2 font-body text-sm"
+                >
+                  <option value="Sketches">Sketches</option>
+                  <option value="Photos">Photos</option>
+                  <option value="Crafts">Crafts</option>
+                  <option value="Painting">Painting</option>
+                </select>
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="font-body text-sm font-bold text-ink-black/80">Description</label>
+                <textarea
+                  value={newDescription}
+                  onChange={(e) => setNewDescription(e.target.value)}
+                  className="bg-white border-2 border-ink-black p-2 font-body text-sm min-h-[60px]"
+                  placeholder="Snippet description..."
+                />
+              </div>
+            </div>
+          )}
 
           {/* Drag & Drop File Zone */}
           <div className="flex flex-col gap-1.5">
@@ -252,12 +325,12 @@ export default function UploadModal({
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  <span>Pinning...</span>
+                  <span>Saving...</span>
                 </>
               ) : (
                 <>
                   <span className="material-symbols-outlined text-sm font-bold">push_pin</span>
-                  <span>Pin to Album</span>
+                  <span>{selectedAlbumId === 'new' ? 'Create Snippet' : 'Pin to Album'}</span>
                 </>
               )}
             </button>

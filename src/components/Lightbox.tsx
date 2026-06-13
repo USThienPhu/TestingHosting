@@ -10,6 +10,7 @@ interface LightboxProps {
   onNext: () => void;
   onLikeToggle: (id: number) => void;
   onEditEntryImages: (albumId: number, newImages: string[]) => void;
+  onDeleteEntry?: (albumId: number) => void;
 }
 
 export default function Lightbox({
@@ -19,6 +20,7 @@ export default function Lightbox({
   onNext,
   onLikeToggle,
   onEditEntryImages,
+  onDeleteEntry,
 }: LightboxProps) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
@@ -387,6 +389,23 @@ export default function Lightbox({
                   <span>{editError}</span>
                 </div>
               )}
+
+              {/* Delete Snippet Button */}
+              <div className="mt-4 pt-4 border-t border-dashed border-ink-black/20">
+                <button
+                  type="button"
+                  disabled={editUploading}
+                  onClick={() => {
+                    if (window.confirm("Are you sure you want to delete this snippet entirely?")) {
+                      if (onDeleteEntry) onDeleteEntry(entry.id);
+                    }
+                  }}
+                  className="w-full bg-red-50 text-red-600 border-2 border-red-600 shadow-[3px_3px_0px_0px_rgba(220,38,38,1)] p-2.5 font-headline text-xs font-bold hover:bg-red-100 hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all cursor-pointer rounded-sm flex items-center justify-center gap-1.5"
+                >
+                  <span className="material-symbols-outlined text-sm font-bold">delete_forever</span>
+                  <span>Delete Snippet</span>
+                </button>
+              </div>
             </div>
 
             <div className="text-[10px] text-ink-black/40 mt-4 text-center font-bold">
