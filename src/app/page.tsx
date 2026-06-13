@@ -6,6 +6,7 @@ import HeroCarousel from "../components/HeroCarousel";
 import GalleryGrid, { GalleryEntry } from "../components/GalleryGrid";
 import Lightbox from "../components/Lightbox";
 import UploadModal from "../components/UploadModal";
+import LetterModal from "../components/LetterModal";
 
 // Initial mock entries featuring the user's images and decorative scrapbook photos
 const INITIAL_ENTRIES: GalleryEntry[] = [
@@ -179,6 +180,7 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedEntry, setSelectedEntry] = useState<GalleryEntry | null>(null);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [isLetterModalOpen, setIsLetterModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -314,7 +316,10 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-paper-yellow text-ink-black font-body">
       {/* Top Navigation Header bar */}
-      <Header onAddClick={() => setIsUploadModalOpen(true)} />
+      <Header 
+        onAddClick={() => setIsUploadModalOpen(true)} 
+        onLetterClick={() => setIsLetterModalOpen(true)}
+      />
 
 
       {/* Hero Interactive Slide presentation */}
@@ -480,6 +485,11 @@ export default function Home() {
           setEntries((prev) => [...prev, newSnippet]);
         }}
       />
+
+      {/* Letter Modal */}
+      {isLetterModalOpen && (
+        <LetterModal onClose={() => setIsLetterModalOpen(false)} />
+      )}
     </div>
 
   );

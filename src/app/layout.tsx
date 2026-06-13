@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Courier_Prime } from "next/font/google";
+import { Bricolage_Grotesque, Space_Mono } from "next/font/google";
 import "./globals.css";
 
 const bricolage = Bricolage_Grotesque({
   variable: "--font-bricolage",
-  subsets: ["latin"],
+  subsets: ["latin", "vietnamese"],
   weight: ["400", "700", "800"],
 });
 
-const courier = Courier_Prime({
+const courier = Space_Mono({
   variable: "--font-courier",
-  subsets: ["latin"],
+  subsets: ["latin", "vietnamese"],
   weight: ["400", "700"],
 });
 

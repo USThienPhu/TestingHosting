@@ -19,6 +19,16 @@ export async function initDB() {
         images JSONB NOT NULL
       );
     `;
+
+    // Create the letters table
+    await sql`
+      CREATE TABLE IF NOT EXISTS letters (
+        id SERIAL PRIMARY KEY,
+        content TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
+
     console.log('Database initialized successfully.');
   } catch (error) {
     console.error('Error initializing database:', error);
